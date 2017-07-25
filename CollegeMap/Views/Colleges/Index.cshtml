@@ -1,0 +1,83 @@
+@model IEnumerable<CollegeMap.Models.CollegeMapModels.College>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HighestDegreeOffered)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Type)
+                </th>
+                    <th>
+                    @Html.DisplayNameFor(model => model.Enrollment)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AnnualTuition)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AnnualRoomAndBoard)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Website)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Address)
+                </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HighestDegreeOffered.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Enrollment)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AnnualTuition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AnnualRoomAndBoard)
+            </td>
+            <td>
+                <a href="@Html.DisplayFor(modelItem => item.Website)">Website</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

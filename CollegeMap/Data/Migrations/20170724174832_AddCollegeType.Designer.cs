@@ -8,9 +8,10 @@ using CollegeMap.Data;
 namespace CollegeMap.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170724174832_AddCollegeType")]
+    partial class AddCollegeType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -71,17 +72,17 @@ namespace CollegeMap.Data.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Address");
-
                     b.Property<int>("AnnualRoomAndBoard");
 
                     b.Property<int>("AnnualTuition");
 
+                    b.Property<int?>("CollegeTypeID");
+
+                    b.Property<int?>("DegreeTypeID");
+
                     b.Property<string>("Description");
 
                     b.Property<int>("Enrollment");
-
-                    b.Property<int?>("HighestDegreeOfferedID");
 
                     b.Property<string>("Name");
 
@@ -91,7 +92,9 @@ namespace CollegeMap.Data.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("HighestDegreeOfferedID");
+                    b.HasIndex("CollegeTypeID");
+
+                    b.HasIndex("DegreeTypeID");
 
                     b.HasIndex("TypeID");
 
@@ -231,12 +234,16 @@ namespace CollegeMap.Data.Migrations
 
             modelBuilder.Entity("CollegeMap.Models.CollegeMapModels.College", b =>
                 {
-                    b.HasOne("CollegeMap.Models.CollegeMapModels.DegreeType", "HighestDegreeOffered")
+                    b.HasOne("CollegeMap.Models.CollegeMapModels.CollegeType")
                         .WithMany("Colleges")
-                        .HasForeignKey("HighestDegreeOfferedID");
+                        .HasForeignKey("CollegeTypeID");
 
-                    b.HasOne("CollegeMap.Models.CollegeMapModels.CollegeType", "Type")
+                    b.HasOne("CollegeMap.Models.CollegeMapModels.DegreeType")
                         .WithMany("Colleges")
+                        .HasForeignKey("DegreeTypeID");
+
+                    b.HasOne("CollegeMap.Models.CollegeMapModels.College", "Type")
+                        .WithMany()
                         .HasForeignKey("TypeID");
                 });
 

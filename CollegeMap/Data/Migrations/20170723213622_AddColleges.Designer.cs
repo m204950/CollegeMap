@@ -8,9 +8,10 @@ using CollegeMap.Data;
 namespace CollegeMap.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170723213622_AddColleges")]
+    partial class AddColleges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -71,8 +72,6 @@ namespace CollegeMap.Data.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Address");
-
                     b.Property<int>("AnnualRoomAndBoard");
 
                     b.Property<int>("AnnualTuition");
@@ -80,8 +79,6 @@ namespace CollegeMap.Data.Migrations
                     b.Property<string>("Description");
 
                     b.Property<int>("Enrollment");
-
-                    b.Property<int?>("HighestDegreeOfferedID");
 
                     b.Property<string>("Name");
 
@@ -91,35 +88,9 @@ namespace CollegeMap.Data.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("HighestDegreeOfferedID");
-
                     b.HasIndex("TypeID");
 
                     b.ToTable("Colleges");
-                });
-
-            modelBuilder.Entity("CollegeMap.Models.CollegeMapModels.CollegeType", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("CollegeTypes");
-                });
-
-            modelBuilder.Entity("CollegeMap.Models.CollegeMapModels.DegreeType", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("DegreeTypes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
@@ -231,12 +202,8 @@ namespace CollegeMap.Data.Migrations
 
             modelBuilder.Entity("CollegeMap.Models.CollegeMapModels.College", b =>
                 {
-                    b.HasOne("CollegeMap.Models.CollegeMapModels.DegreeType", "HighestDegreeOffered")
-                        .WithMany("Colleges")
-                        .HasForeignKey("HighestDegreeOfferedID");
-
-                    b.HasOne("CollegeMap.Models.CollegeMapModels.CollegeType", "Type")
-                        .WithMany("Colleges")
+                    b.HasOne("CollegeMap.Models.CollegeMapModels.College", "Type")
+                        .WithMany()
                         .HasForeignKey("TypeID");
                 });
 

@@ -8,9 +8,10 @@ using CollegeMap.Data;
 namespace CollegeMap.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170724215859_ModCollege")]
+    partial class ModCollege
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -70,8 +71,6 @@ namespace CollegeMap.Data.Migrations
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Address");
 
                     b.Property<int>("AnnualRoomAndBoard");
 

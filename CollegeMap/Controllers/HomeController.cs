@@ -15,8 +15,15 @@ namespace CollegeMap.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
+            if (User.Identity.IsAuthenticated)
+            {
 
+               ViewData["Message"] = "Your application description page.";
+            }
+            else
+            {
+                ViewData["Message"] = "You are not logged in.";
+            }
             return View();
         }
 

@@ -1,0 +1,91 @@
+@model CollegeMap.Models.CollegeMapViewModels.AddCollegeViewModel
+
+@{
+    ViewData["Title"] = "Create College";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>College</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Name" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                <label asp-for="CollegeTypeID" class="col-md-2 control-label"></label>
+                <select asp-for="CollegeTypeID" asp-items="Model.CollegeTypes"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                <label asp-for="DegreeTypeID" class="col-md-2 control-label"></label>
+                <select asp-for="DegreeTypeID" asp-items="Model.DegreeTypes"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Enrollment" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Enrollment" class="form-control" />
+                <span asp-validation-for="Enrollment" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AnnualTuition" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="AnnualTuition" class="form-control" />
+                <span asp-validation-for="AnnualTuition" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AnnualRoomAndBoard" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="AnnualRoomAndBoard" class="form-control" />
+                <span asp-validation-for="AnnualRoomAndBoard" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Website" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Website" class="form-control" />
+                <span asp-validation-for="Website" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Address" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
