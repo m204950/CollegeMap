@@ -74,6 +74,7 @@ namespace CollegeMap.Controllers
                     AnnualTuition = addCollegeViewModel.AnnualTuition,
                     AnnualRoomAndBoard = addCollegeViewModel.AnnualRoomAndBoard,
                     Website = addCollegeViewModel.Website,
+                    Address = addCollegeViewModel.Address,
 
                     Type = newCollegeType,
                     HighestDegreeOffered = newDegreeType
@@ -106,7 +107,7 @@ namespace CollegeMap.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,ID,Enrollment,AnnualTuition,AnnualRoomAndBoard,Website")] College college)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,ID,Enrollment,AnnualTuition,AnnualRoomAndBoard,Website,Address")] College college)
         {
             if (id != college.ID)
             {
@@ -163,6 +164,12 @@ namespace CollegeMap.Controllers
             _context.Colleges.Remove(college);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        // GET: Colleges/Maintenance
+        public async Task<IActionResult> Maintenance()
+        {
+            return View();
         }
 
         private bool CollegeExists(int id)

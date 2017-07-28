@@ -31,18 +31,18 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">CollegeMap</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-left">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                        <li><a asp-area="" asp-controller="Colleges" asp-action="Index">Colleges</a></li>
-                        <li><a asp-area="" asp-controller="DegreeTypes" asp-action="Index">Degree-Types</a></li>
-                        <li><a asp-area="" asp-controller="CollegeTypes" asp-action="Index">College-Types</a></li>
-                    }
-
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                 </ul>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a asp-area="" asp-controller="Colleges" asp-action="Maintenance">Admin-Maintenance</a></li>
+                    </ul>
+                }
+
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>

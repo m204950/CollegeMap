@@ -3,14 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using CollegeMap.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CollegeMap.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly ApplicationDbContext _context;
+
+        public HomeController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Colleges.Include(c => c.Type).Include(c => c.HighestDegreeOffered).ToListAsync());
         }
 
         public IActionResult About()
