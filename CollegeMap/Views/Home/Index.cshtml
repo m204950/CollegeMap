@@ -1,92 +1,139 @@
-﻿@model IEnumerable<CollegeMap.Models.CollegeMapModels.College>
+﻿@model CollegeMap.Models.CollegeMapViewModels.QueryCollegeViewModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<h2>Index</h2>
+<h2>Query</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HighestDegreeOffered)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Enrollment)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AnnualTuition)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AnnualRoomAndBoard)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Website)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HighestDegreeOffered.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Type.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Enrollment)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AnnualTuition)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AnnualRoomAndBoard)
-                </td>
-                <td>
-                    <a href="@Html.DisplayFor(modelItem => item.Website)">Website</a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Address)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-    <div id="floating-panel">
-        <input id="address" type="textbox" value="Sydney, NSW">
-        <input id="submit" type="button" value="Geocode">
+<form asp-action="Query">
+    <div class="form-horizontal">
+        <h4>College Selection Criteria</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="NameContains" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NameContains" class="form-control" />
+                <span asp-validation-for="NameContains" class="text-danger"></span>
+            </div>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="MaximumEnrollment" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="MaximumEnrollment" class="form-control" />
+                <span asp-validation-for="MaximumEnrollment" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="MinimumEnrollment" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="MinimumEnrollment" class="form-control" />
+                <span asp-validation-for="MinimumEnrollment" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="MaxTotalCost" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="MaxTotalCost" class="form-control" />
+                <span asp-validation-for="MaxTotalCost" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="CollegeTypeID" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="CollegeTypeID" asp-items="Model.CollegeTypes"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="DegreeTypeID" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="DegreeTypeID" asp-items="Model.DegreeTypes"></select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Query" class="btn btn-default" />
+            </div>
+        </div>
     </div>
-    <div id="map"></div>
+</form>
+
+@if (Model.Colleges != null)
+{
+    <h2>Query Results</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Highest Degree Offered
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Enrollment
+                </th>
+                <th>
+                    Annual Tuition
+                </th>
+                <th>
+                    Annual R&B
+                </th>
+                <th>
+                    Website
+                </th>
+                <th>
+                    Address
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Colleges)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HighestDegreeOffered.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Type.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Enrollment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AnnualTuition)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AnnualRoomAndBoard)
+                    </td>
+                    <td>
+                        <a href="@Html.DisplayFor(modelItem => item.Website)">Website</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
  
 @section Scripts{
    <script type="text/javascript">

@@ -64,7 +64,14 @@
                 @Html.DisplayFor(modelItem => item.AnnualTuition)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AnnualRoomAndBoard)
+                @if (item.AnnualRoomAndBoard != 0)
+                {
+                    @Html.DisplayFor(modelItem => item.AnnualRoomAndBoard)
+                }
+                else
+                {
+                    <p>N/A</p>
+                }
             </td>
             <td>
                 <a href="@Html.DisplayFor(modelItem => item.Website)">Website</a>
