@@ -69,9 +69,6 @@
         <thead>
             <tr>
                 <th>
-                    Map#
-                </th>
-                <th>
                     Name
                 </th>
                 <th>
@@ -101,14 +98,9 @@
             </tr>
         </thead>
         <tbody>
-            @{ var mapIndex = 1; }
             @foreach (var item in Model.Colleges)
             {
                 <tr>
-                    <td>
-                        @mapIndex
-                        @{ mapIndex++; }
-                   </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
@@ -141,59 +133,41 @@
         </tbody>
     </table>
 
+<p id="demo">A Paragraph</p>
+<button type="button" onclick="myFunction()">Try it</button>
+<p id="time">Time slot</p>
 <div id="map"></div>
 
 <script>
-    var newMarker;
     function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 8,
             center: { lat: -34.397, lng: 150.644 }
         });
         var geocoder = new google.maps.Geocoder();
-        var markers = [];
-        var addresses = [];
-        var titles = [];
-        @foreach (var item in Model.Colleges)
-        {
+
+            @foreach (var item in Model.Colleges)
+            {
             <text>
-           addresses.push("@item.Address");
-           titles.push("@item.Name");
+                geocodeAddress(geocoder, map, "@item.Address", "@item.Name");
             </text>
-        }
-
-        mark_pins(addresses, titles, map);
+            }
     }
-
-    function mark_pins(addresses, titles, map) {
-        var geocoder = new google.maps.Geocoder();
-        var markersArray = [];
-        var bounds = new google.maps.LatLngBounds();
-
-        var titleIndex = 0;
-        for (i = 0; i < addresses.length; i++) {
-            // iterate each  address
-            geocoder.geocode({
-                'address': addresses[i]
-            }, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    var currentTitle = titles[titleIndex];
-                    var currentLabel = (titleIndex + 1).toString();
-                    titleIndex++;
+        function geocodeAddress(geocoder, resultsMap, addr, title) {
+            var address = addr;
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
                     var marker = new google.maps.Marker({
-                        map: map,
+                        map: resultsMap,
                         position: results[0].geometry.location,
-                        title: currentTitle,
-                        label: currentLabel
+                        title: title
                     });
-                    marker.setMap(map);
-                    bounds.extend(results[0].geometry.location);
-                    map.fitBounds(bounds);
                 } else {
                     alert('Geocode was not successful for the following reason: ' + status);
                 }
             });
         }
-    }
 </script>
 <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U&callback=initMap">
