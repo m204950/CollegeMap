@@ -53,7 +53,7 @@ namespace CollegeMap.Controllers
                 int maxEnrollment = queryCollegeViewModel.MaximumEnrollment;
                 int maxTotalCost = queryCollegeViewModel.MaxTotalCost;
                 int desiredDegreeLevelID = queryCollegeViewModel.DegreeTypeID;
-                int collegeTypeID = queryCollegeViewModel.CollegeTypeID;
+                IEnumerable<int> collegeTypeIDs = queryCollegeViewModel.CollegeTypeIDs;
                 string nameContains;
                 if (queryCollegeViewModel.NameContains == null)
                 {
@@ -63,27 +63,14 @@ namespace CollegeMap.Controllers
                 {
                     nameContains = queryCollegeViewModel.NameContains;
                 }
-                if (collegeTypeID == 500)  // ID for selecting all college types
-                {
-                    queryCollegeViewModel.Colleges = await _context.Colleges.
-                        Where(c => c.Enrollment <= maxEnrollment).Where(c => c.Enrollment >= minEnrollment).
-                        Where(c => c.AnnualTuition + c.AnnualRoomAndBoard <= maxTotalCost).
-                        Where(c => c.Name.ToUpper().Contains(nameContains.ToUpper())).
-                        // following relies on degree types having ascending IDs corresponding to their level
-                        Where(c => c.HighestDegreeOffered.ID >= desiredDegreeLevelID).
-                        Include(c => c.Type).Include(c => c.HighestDegreeOffered).ToListAsync();
-                }
-                else
-                {
-                    queryCollegeViewModel.Colleges = await _context.Colleges.
-                        Where(c => c.Enrollment <= maxEnrollment).Where(c => c.Enrollment >= minEnrollment).
-                        Where(c => c.AnnualTuition + c.AnnualRoomAndBoard <= maxTotalCost).
-                        Where(c => c.Name.ToUpper().Contains(nameContains.ToUpper())).
-                        // following relies on degree types having ascending IDs corresponding to their level
-                        Where(c => c.HighestDegreeOffered.ID >= desiredDegreeLevelID).
-                        Where(c => c.Type.ID == collegeTypeID).
-                        Include(c => c.Type).Include(c => c.HighestDegreeOffered).ToListAsync();
-                }
+                queryCollegeViewModel.Colleges = await _context.Colleges.
+                    Where(c => c.Enrollment <= maxEnrollment).Where(c => c.Enrollment >= minEnrollment).
+                    Where(c => c.AnnualTuition + c.AnnualRoomAndBoard <= maxTotalCost).
+                    Where(c => c.Name.ToUpper().Contains(nameContains.ToUpper())).
+                    // following relies on degree types having ascending IDs corresponding to their level
+                    Where(c => c.HighestDegreeOffered.ID >= desiredDegreeLevelID).
+                    Where(c => collegeTypeIDs.Contains(c.Type.ID)).OrderBy(c => c.Name).
+                    Include(c => c.Type).Include(c => c.HighestDegreeOffered).ToListAsync();
 
             }
             IEnumerable<CollegeType> collegeTypes = _context.CollegeTypes.ToList();

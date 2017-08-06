@@ -4,11 +4,10 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h2>Query</h2>
+<h3>College Selection Criteria</h3>
 
 <form asp-action="Query">
     <div class="form-horizontal">
-        <h4>College Selection Criteria</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
@@ -41,9 +40,9 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="CollegeTypeID" class="col-md-2 control-label"></label>
+            <label asp-for="CollegeTypeIDs" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="CollegeTypeID" asp-items="Model.CollegeTypes"></select>
+                <select asp-for="CollegeTypeIDs" asp-items="Model.CollegeTypes"></select>
             </div>
         </div>
         <div class="form-group">
@@ -63,19 +62,19 @@
 
 @if (Model.Colleges != null)
 {
-    <h2>Query Results</h2>
+    <h3>Selected Colleges</h3>
 
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    Map#
+                    Map #
                 </th>
                 <th>
                     Name
                 </th>
                 <th>
-                    Description
+                    Notes
                 </th>
                 <th>
                     Highest Degree Offered
@@ -93,9 +92,6 @@
                     Annual R&B
                 </th>
                 <th>
-                    Website
-                </th>
-                <th>
                     Address
                 </th>
             </tr>
@@ -110,7 +106,7 @@
                         @{ mapIndex++; }
                    </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Name)
+                        <a href="@Html.DisplayFor(modelItem => item.Website)">@Html.DisplayFor(modelItem => item.Name)</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Description)
@@ -129,9 +125,6 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.AnnualRoomAndBoard)
-                    </td>
-                    <td>
-                        <a href="@Html.DisplayFor(modelItem => item.Website)">Website</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Address)
@@ -188,6 +181,10 @@
                     marker.setMap(map);
                     bounds.extend(results[0].geometry.location);
                     map.fitBounds(bounds);
+                    if (map.getZoom() > 10) {  // don't zoom more than city level
+                        map.setZoom(10);
+
+                    }
                 } else {
                     alert('Geocode was not successful for the following reason: ' + status);
                 }

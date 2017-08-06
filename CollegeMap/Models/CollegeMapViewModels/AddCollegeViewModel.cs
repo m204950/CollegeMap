@@ -14,7 +14,7 @@ namespace CollegeMap.Models.CollegeMapViewModels
         [Display(Name = "College Name")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "You must give your college a description")]
+        [Display(Name = "Notes")]
         public string Description { get; set; }
 
         [Required]

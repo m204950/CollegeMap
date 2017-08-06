@@ -29,8 +29,8 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public int MaxTotalCost { get; set; }
 
         [Required]
-        [Display(Name = "College Type Desired")]
-        public int CollegeTypeID { get; set; }
+        [Display(Name = "College Type Desired (multi-select)")]
+        public IEnumerable<int> CollegeTypeIDs { get; set; }
 
         [Required]
         [Display(Name = "Highest Degree Level Neede")]
@@ -69,11 +69,6 @@ namespace CollegeMap.Models.CollegeMapViewModels
                     Selected = true
                 });
             }
-            CollegeTypes.Add(new SelectListItem
-            {
-                Value = "500",
-                Text = "All"
-            });
 
         }
         public QueryCollegeViewModel()
