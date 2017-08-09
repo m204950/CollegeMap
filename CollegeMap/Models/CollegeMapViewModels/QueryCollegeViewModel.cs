@@ -41,7 +41,7 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public IEnumerable<int> CollegeTypeIDs { get; set; }
 
         [Required]
-        [Display(Name = "Highest Degree Level Neede")]
+        [Display(Name = "Highest Degree Level Needed")]
         public int DegreeTypeID { get; set; }
 
         public List<College> Colleges { get; set; }
