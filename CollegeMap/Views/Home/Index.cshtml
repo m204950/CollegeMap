@@ -137,7 +137,15 @@
                         @Html.DisplayFor(modelItem => item.AnnualTuition)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.AnnualRoomAndBoard)
+                        @if (item.AnnualRoomAndBoard != 0)
+                        {
+                            @Html.DisplayFor(modelItem => item.AnnualRoomAndBoard)
+                        }
+                        else
+                        {
+                            <text>N/A</text>
+
+                        }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Address)
