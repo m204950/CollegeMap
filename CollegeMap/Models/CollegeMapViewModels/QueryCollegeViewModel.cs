@@ -15,7 +15,7 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public string HomeAddress { get; set; }
 
         [Required]
-        [Display(Name = "Max Travel Distance (miles)")]
+        [Display(Name = "Max Travel Dist. (mi)")]
         public int MaxTravel { get; set; }
 
         [Required]
