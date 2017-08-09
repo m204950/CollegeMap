@@ -110,6 +110,7 @@ namespace CollegeMap.Controllers
                         {
                             //int collegeDistance = rootData.rows[0].elements[i].distance.value;
                             string collegeDistanceStr = rootData.rows[0].elements[i].distance.text.Replace("mi", "");
+                            collegeDistanceStr = collegeDistanceStr.Replace("ft", "");
                             int collegeDistance = (int)Math.Round(float.Parse(collegeDistanceStr), 0);
                             if (collegeDistance > maxTravel)
                             {
