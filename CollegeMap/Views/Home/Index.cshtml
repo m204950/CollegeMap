@@ -11,6 +11,22 @@
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
+            <label asp-for="HomeAddress" class="col-md-2 control-label"></label>
+            <div class="col-md-5">
+                <input asp-for="HomeAddress" class="form-control" />
+                <span asp-validation-for="HomeAddress" class="text-danger"></span>
+            </div>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="MaxTravel" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="MaxTravel" class="form-control" />
+                <span asp-validation-for="MaxTravel" class="text-danger"></span>
+            </div>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
             <label asp-for="NameContains" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="NameContains" class="form-control" />
@@ -94,6 +110,9 @@
                 <th>
                     Address
                 </th>
+                <th>
+                    Distance
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -129,6 +148,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Address)
                     </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Distance)
+                    </td>
                 </tr>
             }
         </tbody>
@@ -145,7 +167,10 @@
         var geocoder = new google.maps.Geocoder();
         var markers = [];
         var addresses = [];
+        addresses.push("@Model.HomeAddress");
+
         var titles = [];
+        titles.push("Home");
         @foreach (var item in Model.Colleges)
         {
             <text>
@@ -170,7 +195,12 @@
             }, function (results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
                     var currentTitle = titles[titleIndex];
-                    var currentLabel = (titleIndex + 1).toString();
+                    if (titleIndex == 0) {
+                        currentLabel = "H"
+                    }
+                    else {
+                        var currentLabel = (titleIndex).toString();
+                    }
                     titleIndex++;
                     var marker = new google.maps.Marker({
                         map: map,

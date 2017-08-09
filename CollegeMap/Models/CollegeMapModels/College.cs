@@ -28,6 +28,8 @@ namespace CollegeMap.Models.CollegeMapModels
         public string Website { get; set; }
         // Address can be anything google maps can handle
         public string Address { get; set; }
+        // distance used at query time, based on home location used in the query
+        public int Distance { get; set; }
 
     }
 }

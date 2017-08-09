@@ -11,6 +11,14 @@ namespace CollegeMap.Models.CollegeMapViewModels
     public class QueryCollegeViewModel
     {
         [Required]
+        [Display(Name = "Home Address")]
+        public string HomeAddress { get; set; }
+
+        [Required]
+        [Display(Name = "Max Travel Distance (miles)")]
+        public int MaxTravel { get; set; }
+
+        [Required]
         [Display(Name = "Min Enrollment")]
         [Range(300, 100000)]
         public int MinimumEnrollment { get; set; }

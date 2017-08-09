@@ -7,6 +7,9 @@ using CollegeMap.Data;
 using Microsoft.EntityFrameworkCore;
 using CollegeMap.Models.CollegeMapViewModels;
 using CollegeMap.Models.CollegeMapModels;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace CollegeMap.Controllers
 {
@@ -49,6 +52,8 @@ namespace CollegeMap.Controllers
         {
             if (ModelState.IsValid)
             {
+                string homeAddress = queryCollegeViewModel.HomeAddress;
+                int maxTravel = queryCollegeViewModel.MaxTravel;  
                 int minEnrollment = queryCollegeViewModel.MinimumEnrollment;
                 int maxEnrollment = queryCollegeViewModel.MaximumEnrollment;
                 int maxTotalCost = queryCollegeViewModel.MaxTotalCost;
@@ -72,7 +77,55 @@ namespace CollegeMap.Controllers
                     Where(c => collegeTypeIDs.Contains(c.Type.ID)).OrderBy(c => c.Name).
                     Include(c => c.Type).Include(c => c.HighestDegreeOffered).ToListAsync();
 
+                //Pass request to google api with orgin and destination details
+                string origins = "&origins=" + homeAddress.Replace(" ", "+");
+                string destinations = "&destinations=";
+
+                foreach (College college in queryCollegeViewModel.Colleges)
+                {
+                    destinations += college.Address + "|";
+                }
+                destinations = destinations.Replace(" ", "+");
+
+                HttpWebRequest request =
+                    (HttpWebRequest)WebRequest.Create("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial"
+                    + origins + destinations
+                    + "&mode=Car&language=us-en&sensor=false&key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U");
+
+                /*                   (HttpWebRequest)WebRequest.Create("https://maps.googleapis.com/maps/api/distancematrix/json?origins="
+                                   + "51.123959,3.326682" + "&destinations=" + "51.158089,4.145267"
+                                   + "&mode=Car&language=us-en&sensor=false&key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U");
+               */
+
+                WebResponse response = await request.GetResponseAsync();
+                using (var streamReader = new StreamReader(response.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        JSON_Distance.Rootobject rootData = JsonConvert.DeserializeObject<JSON_Distance.Rootobject>(result);
+                        // loop in reverse since deletion of entries affects indices
+                        for (int i = queryCollegeViewModel.Colleges.Count - 1; i >= 0 ; i--)
+                        {
+                            //int collegeDistance = rootData.rows[0].elements[i].distance.value;
+                            string collegeDistanceStr = rootData.rows[0].elements[i].distance.text.Replace("mi", "");
+                            int collegeDistance = (int)Math.Round(float.Parse(collegeDistanceStr), 0);
+                            if (collegeDistance > maxTravel)
+                            {
+                                queryCollegeViewModel.Colleges.RemoveAt(i);
+                            }
+                            else
+                            {
+                                queryCollegeViewModel.Colleges[i].Distance = collegeDistance;
+                            }
+
+                        }
+                    }
+
+                }
             }
+
             IEnumerable<CollegeType> collegeTypes = _context.CollegeTypes.ToList();
             IEnumerable<DegreeType> degreeTypes = _context.DegreeTypes.ToList();
             queryCollegeViewModel.CreateCollegeTypeSelects(collegeTypes);
