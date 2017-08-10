@@ -34,7 +34,7 @@ namespace CollegeMap.Controllers
                 return NotFound();
             }
 
-            var college = await _context.Colleges
+            var college = await _context.Colleges.Include(c => c.Type).Include(c => c.HighestDegreeOffered)
                 .SingleOrDefaultAsync(m => m.ID == id);
             if (college == null)
             {
@@ -94,12 +94,13 @@ namespace CollegeMap.Controllers
                 return NotFound();
             }
 
-            var college = await _context.Colleges.SingleOrDefaultAsync(m => m.ID == id);
+            var college = await _context.Colleges.Include(c => c.Type).Include(c => c.HighestDegreeOffered).SingleOrDefaultAsync(m => m.ID == id);
             if (college == null)
             {
                 return NotFound();
             }
             return View(college);
+
         }
 
         // POST: Colleges/Edit/5

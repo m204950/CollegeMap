@@ -23,6 +23,18 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt>
+            Highest Degree Offered
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HighestDegreeOffered.Name)
+        </dd>
+        <dt>
+            College Type
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type.Name)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Enrollment)
         </dt>
         <dd>
@@ -45,6 +57,12 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Website)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Address)
         </dd>
     </dl>
 </div>
