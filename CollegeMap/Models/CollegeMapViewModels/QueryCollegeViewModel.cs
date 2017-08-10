@@ -33,6 +33,7 @@ namespace CollegeMap.Models.CollegeMapViewModels
 
         [Required]
         [Display(Name = "Max Tuition plus R&B")]
+        [DisplayFormat(DataFormatString = "{0:c}")]
         [Range(300, 1000000)]
         public int MaxTotalCost { get; set; }
 

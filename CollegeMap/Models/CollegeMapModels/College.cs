@@ -17,13 +17,16 @@ namespace CollegeMap.Models.CollegeMapModels
         [Display(Name = "Highest Degree")]
         public DegreeType HighestDegreeOffered { get; set; }
         // Total enrollment
+        [DisplayFormat(DataFormatString = "{0:n0}")]
         public int Enrollment { get; set; }
         // public private, for-profit
         public CollegeType Type { get; set; }
         [Display(Name = "Tuition")]
+        [DisplayFormat(DataFormatString = "{0:c0}")]
         public int AnnualTuition { get; set; }
         // zero if not available.  view to display N/A when zero
         [Display(Name = "Annual R & B")]
+        [DisplayFormat(DataFormatString = "{0:c0}")]
         public int AnnualRoomAndBoard { get; set; }
         public string Website { get; set; }
         // Address can be anything google maps can handle
