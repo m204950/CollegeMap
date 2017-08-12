@@ -99,7 +99,20 @@ namespace CollegeMap.Controllers
             {
                 return NotFound();
             }
-            return View(college);
+            IEnumerable<CollegeType> collegeTypes = _context.CollegeTypes.ToList();
+            IEnumerable<DegreeType> degreeTypes = _context.DegreeTypes.ToList();
+            AddCollegeViewModel addCollegeViewModel = new AddCollegeViewModel(collegeTypes, degreeTypes);
+            addCollegeViewModel.ID = (int)id;
+            addCollegeViewModel.Address = college.Address;
+            addCollegeViewModel.AnnualRoomAndBoard = college.AnnualRoomAndBoard;
+            addCollegeViewModel.AnnualTuition = college.AnnualTuition;
+            addCollegeViewModel.CollegeTypeID = college.Type.ID;
+            addCollegeViewModel.DegreeTypeID = college.HighestDegreeOffered.ID;
+            addCollegeViewModel.Description = college.Description;
+            addCollegeViewModel.Enrollment = college.Enrollment;
+            addCollegeViewModel.Name = college.Name;
+            addCollegeViewModel.Website = college.Website;
+            return View(addCollegeViewModel);
 
         }
 
@@ -108,34 +121,49 @@ namespace CollegeMap.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,ID,Enrollment,AnnualTuition,AnnualRoomAndBoard,Website,Address")] College college)
+        public async Task<IActionResult> Edit(AddCollegeViewModel addCollegeViewModel)
         {
-            if (id != college.ID)
-            {
-                return NotFound();
-            }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(college);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CollegeExists(college.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Index");
-            }
-            return View(college);
+                        if (ModelState.IsValid)
+                        {
+                            try
+                            {
+                                College college = await _context.Colleges.Include(c => c.Type).Include(c => c.HighestDegreeOffered).SingleOrDefaultAsync(m => m.ID == addCollegeViewModel.ID);
+                                if (college == null)
+                                {
+                                    return NotFound();
+                                }
+                                CollegeType newCollegeType =
+                                    _context.CollegeTypes.Single(c => c.ID == addCollegeViewModel.CollegeTypeID);
+                                DegreeType newDegreeType =
+                                    _context.DegreeTypes.Single(c => c.ID == addCollegeViewModel.DegreeTypeID);
+                                college.Address = addCollegeViewModel.Address;
+                                college.AnnualRoomAndBoard = addCollegeViewModel.AnnualRoomAndBoard;
+                                college.AnnualTuition = addCollegeViewModel.AnnualTuition;
+                                college.Type = newCollegeType;
+                                college.HighestDegreeOffered = newDegreeType;
+                                college.Description = addCollegeViewModel.Description;
+                                college.Enrollment = addCollegeViewModel.Enrollment;
+                                college.Name = addCollegeViewModel.Name;
+                                college.Website = addCollegeViewModel.Website;
+                                _context.Update(college);
+                                await _context.SaveChangesAsync();
+                            }
+                            catch (DbUpdateConcurrencyException)
+                            {
+                                if (!CollegeExists(addCollegeViewModel.ID))
+                                {
+                                    return NotFound();
+                                }
+                                else
+                                {
+                                    throw;
+                                }
+                            }
+                            return RedirectToAction("Index");
+                        }
+                        return View(addCollegeViewModel);
+                        
         }
 
         // GET: Colleges/Delete/5

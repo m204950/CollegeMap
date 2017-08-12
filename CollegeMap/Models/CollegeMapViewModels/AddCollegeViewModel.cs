@@ -43,6 +43,9 @@ namespace CollegeMap.Models.CollegeMapViewModels
         [Display(Name = "Highest Degree Offered")]
         public int DegreeTypeID { get; set; }
 
+        // Used for edit
+        public int ID { get; set; }
+
         public List<SelectListItem> CollegeTypes { get; set; }
 
         public List<SelectListItem> DegreeTypes { get; set; }
