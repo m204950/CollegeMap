@@ -163,67 +163,39 @@
 <script>
     var newMarker;
     function initMap() {
+        var bounds = new google.maps.LatLngBounds();
         var map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: -34.397, lng: 150.644 }
+            zoom: 10,
+            center: { lat: @Model.HomeLatitude, lng: @Model.HomeLongitude }
         });
-        var geocoder = new google.maps.Geocoder();
-        var markers = [];
-        var addresses = [];
-        addresses.push("@Model.HomeAddress");
 
-        var titles = [];
-        titles.push("Home");
+        var marker = new google.maps.Marker({
+            position: { lat: @Model.HomeLatitude, lng: @Model.HomeLongitude },
+            map: map,
+            label: "H",
+            title: 'Home'
+        });
+        bounds.extend({ lat: @Model.HomeLatitude, lng: @Model.HomeLongitude });
+
+        var labelIndex = 1;
+
         @foreach (var item in Model.Colleges)
         {
             <text>
-           addresses.push("@item.Address");
-           titles.push("@item.Name");
+            var marker = new google.maps.Marker({
+                position: { lat: @item.Latitude, lng: @item.Longitude },
+                map: map,
+                label: (labelIndex).toString(),
+                title: "@item.Name"
+            });
+            labelIndex++;
+            bounds.extend({ lat: @item.Latitude, lng: @item.Longitude });
             </text>
         }
-
-        mark_pins(addresses, titles, map);
+        map.fitBounds(bounds);
     }
 
-    function mark_pins(addresses, titles, map) {
-        var geocoder = new google.maps.Geocoder();
-        var markersArray = [];
-        var bounds = new google.maps.LatLngBounds();
-
-        var titleIndex = 0;
-        for (i = 0; i < addresses.length; i++) {
-            // iterate each  address
-            geocoder.geocode({
-                'address': addresses[i]
-            }, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    var currentTitle = titles[titleIndex];
-                    if (titleIndex == 0) {
-                        currentLabel = "H"
-                    }
-                    else {
-                        var currentLabel = (titleIndex).toString();
-                    }
-                    titleIndex++;
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        position: results[0].geometry.location,
-                        title: currentTitle,
-                        label: currentLabel
-                    });
-                    marker.setMap(map);
-                    bounds.extend(results[0].geometry.location);
-                    map.fitBounds(bounds);
-                    if (map.getZoom() > 10) {  // don't zoom more than city level
-                        map.setZoom(10);
-
-                    }
-                } else {
-                    alert('Geocode was not successful for the following reason: ' + status);
-                }
-            });
-        }
-    }
-</script>
+    </script>
 <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U&callback=initMap">
 </script>

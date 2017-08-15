@@ -47,6 +47,10 @@ namespace CollegeMap.Models.CollegeMapViewModels
 
         public List<College> Colleges { get; set; }
 
+        public float HomeLatitude { get; set; }
+
+        public float HomeLongitude { get; set; }
+
         public List<SelectListItem> CollegeTypes { get; set; }
 
         public List<SelectListItem> DegreeTypes { get; set; }

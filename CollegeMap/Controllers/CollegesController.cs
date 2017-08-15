@@ -8,12 +8,60 @@ using Microsoft.EntityFrameworkCore;
 using CollegeMap.Data;
 using CollegeMap.Models.CollegeMapModels;
 using CollegeMap.Models.CollegeMapViewModels;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace CollegeMap.Controllers
 {
     public class CollegesController : Controller
     {
         private readonly ApplicationDbContext _context;
+
+        public struct Location
+        {
+            public float Lat;
+            public float Lon;
+        }
+
+        public static async Task<Location> GetLocationFromAddress(string address)
+        {
+            string addressNoWhitespace = Regex.Replace(address, "\\s+", "+");
+
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create("https://maps.googleapis.com/maps/api/geocode/json?address="
+                + addressNoWhitespace
+                + "&key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U");
+
+            float lat = 0.0F;
+            float lon = 0.0F;
+
+            WebResponse response = await request.GetResponseAsync();
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                var result = streamReader.ReadToEnd();
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    JSON_Position.Rootobject rootData = JsonConvert.DeserializeObject<JSON_Position.Rootobject>(result);
+                    // loop in reverse since deletion of entries affects indices
+                    if (rootData.status == "OK")
+                    {
+                        lat = rootData.results[0].geometry.location.lat;
+                        lon = rootData.results[0].geometry.location.lng;
+                    }
+                }
+
+            }
+            Location location = new Location
+            {
+                Lat = lat,
+                Lon = lon
+            };
+            return location;
+
+        }
 
         public CollegesController(ApplicationDbContext context)
         {
@@ -66,6 +114,9 @@ namespace CollegeMap.Controllers
                     _context.CollegeTypes.Single(c => c.ID == addCollegeViewModel.CollegeTypeID);
                 DegreeType newDegreeType =
                     _context.DegreeTypes.Single(c => c.ID == addCollegeViewModel.DegreeTypeID);
+
+                Location location = await GetLocationFromAddress(addCollegeViewModel.Address);
+
                 College college = new College
                 {
                     Name = addCollegeViewModel.Name,
@@ -75,6 +126,8 @@ namespace CollegeMap.Controllers
                     AnnualRoomAndBoard = addCollegeViewModel.AnnualRoomAndBoard,
                     Website = addCollegeViewModel.Website,
                     Address = addCollegeViewModel.Address,
+                    Latitude = location.Lat,
+                    Longitude = location.Lon,
 
                     Type = newCollegeType,
                     HighestDegreeOffered = newDegreeType
@@ -138,6 +191,11 @@ namespace CollegeMap.Controllers
                                 DegreeType newDegreeType =
                                     _context.DegreeTypes.Single(c => c.ID == addCollegeViewModel.DegreeTypeID);
                                 college.Address = addCollegeViewModel.Address;
+
+                                Location location = await GetLocationFromAddress(addCollegeViewModel.Address);
+                                college.Latitude = location.Lat;
+                                college.Longitude = location.Lon;
+
                                 college.AnnualRoomAndBoard = addCollegeViewModel.AnnualRoomAndBoard;
                                 college.AnnualTuition = addCollegeViewModel.AnnualTuition;
                                 college.Type = newCollegeType;

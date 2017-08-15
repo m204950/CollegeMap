@@ -10,6 +10,8 @@ using CollegeMap.Models.CollegeMapModels;
 using System.Net;
 using System.IO;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using static CollegeMap.Controllers.CollegesController;
 
 namespace CollegeMap.Controllers
 {
@@ -53,6 +55,10 @@ namespace CollegeMap.Controllers
             if (ModelState.IsValid)
             {
                 string homeAddress = queryCollegeViewModel.HomeAddress;
+                Location location = await CollegesController.GetLocationFromAddress(homeAddress);
+                queryCollegeViewModel.HomeLatitude = location.Lat;
+                queryCollegeViewModel.HomeLongitude = location.Lon;
+
                 int maxTravel = queryCollegeViewModel.MaxTravel;  
                 int minEnrollment = queryCollegeViewModel.MinimumEnrollment;
                 int maxEnrollment = queryCollegeViewModel.MaximumEnrollment;
@@ -78,24 +84,20 @@ namespace CollegeMap.Controllers
                     Include(c => c.Type).Include(c => c.HighestDegreeOffered).ToListAsync();
 
                 //Pass request to google api with orgin and destination details
-                string origins = "&origins=" + homeAddress.Replace(" ", "+");
+                string origins = "&origins=" + Regex.Replace(homeAddress, "\\s+", "+");
                 string destinations = "&destinations=";
 
                 foreach (College college in queryCollegeViewModel.Colleges)
                 {
                     destinations += college.Address + "|";
                 }
-                destinations = destinations.Replace(" ", "+");
+                destinations = Regex.Replace(destinations, "\\s+", "+");
 
                 HttpWebRequest request =
                     (HttpWebRequest)WebRequest.Create("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial"
                     + origins + destinations
                     + "&mode=Car&language=us-en&sensor=false&key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U");
 
-                /*                   (HttpWebRequest)WebRequest.Create("https://maps.googleapis.com/maps/api/distancematrix/json?origins="
-                                   + "51.123959,3.326682" + "&destinations=" + "51.158089,4.145267"
-                                   + "&mode=Car&language=us-en&sensor=false&key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U");
-               */
 
                 WebResponse response = await request.GetResponseAsync();
                 using (var streamReader = new StreamReader(response.GetResponseStream()))
