@@ -19,13 +19,6 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Description" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
             <label asp-for="CollegeTypeID" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <select asp-for="CollegeTypeID" asp-items="Model.CollegeTypes"></select>
@@ -45,6 +38,13 @@
             </div>
         </div>
         <div class="form-group">
+            <label asp-for="AcceptanceRate" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="AcceptanceRate" class="form-control" />
+                <span asp-validation-for="AcceptanceRate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
             <label asp-for="AnnualTuition" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="AnnualTuition" class="form-control" />
@@ -52,10 +52,17 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="AnnualRoomAndBoard" class="col-md-2 control-label"></label>
+            <label asp-for="AnnualTuitionOut" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="AnnualRoomAndBoard" class="form-control" />
-                <span asp-validation-for="AnnualRoomAndBoard" class="text-danger"></span>
+                <input asp-for="AnnualTuitionOut" class="form-control" />
+                <span asp-validation-for="AnnualTuitionOut" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AvgNetPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="AvgNetPrice" class="form-control" />
+                <span asp-validation-for="AvgNetPrice" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">

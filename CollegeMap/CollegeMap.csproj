@@ -12,6 +12,7 @@
     <UserSecretsId>aspnet-CollegeMap-2b383498-6c82-4b6e-95b0-f0f883276d7c</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="2.16.3" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.1.1" />
@@ -27,6 +28,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.0" />
+    <PackageReference Include="X.PagedList" Version="7.1.0" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="1.0.4-beta" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />

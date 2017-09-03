@@ -13,7 +13,7 @@ namespace CollegeMap.Models.CollegeMapModels
         public string Description { get; set; }
         public int ID { get; set; }
 
-        // Associate, Bachelors, Masters, Doctorate
+        // Non-Degree, Certificat, Associate, Bachelors, Graduate
         [Display(Name = "Highest Degree")]
         public DegreeType HighestDegreeOffered { get; set; }
         // Total enrollment
@@ -21,13 +21,25 @@ namespace CollegeMap.Models.CollegeMapModels
         public int Enrollment { get; set; }
         // public private, for-profit
         public CollegeType Type { get; set; }
-        [Display(Name = "Tuition")]
+
+        [Display(Name = "Tuition - In State")]
         [DisplayFormat(DataFormatString = "{0:c0}")]
         public int AnnualTuition { get; set; }
-        // zero if not available.  view to display N/A when zero
-        [Display(Name = "Annual R & B")]
+
+        [Display(Name = "Tuition - Out of State")]
         [DisplayFormat(DataFormatString = "{0:c0}")]
-        public int AnnualRoomAndBoard { get; set; }
+        public int AnnualTuitionOut { get; set; }
+
+        [Display(Name = "Acceptance Rate")]
+        [DisplayFormat(DataFormatString = "{0:P1}")]
+        public float AcceptanceRate { get; set; }
+
+        // The average annual total cost of attendance, including tuition and fees, 
+        // books and supplies, and living expenses, minus the average grant/scholarship aid. 
+        [Display(Name = "Average Annual Net Cost of Attendance")]
+        [DisplayFormat(DataFormatString = "{0:c0}")]
+        public int AvgNetPrice { get; set; }
+
         public string Website { get; set; }
         // Address can be anything google maps can handle
         public string Address { get; set; }

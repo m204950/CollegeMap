@@ -13,4 +13,12 @@
 <p>
     <a asp-controller="CollegeTypes" asp-action="Index">Maintain College Types</a>
 </p>
-
+<form asp-controller="Colleges"  asp-action="Import" method="get">
+    <div class="form-actions no-color">
+        <p>
+            College Data Provider: <input type="text" name="Source" />
+            Data Version: <input type="text" name="Version" />
+            <input type="submit" value="Import" class="btn btn-default" /> 
+        </p>
+    </div>
+</form>

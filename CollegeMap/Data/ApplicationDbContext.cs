@@ -14,6 +14,7 @@ namespace CollegeMap.Data
         public DbSet<College> Colleges { get; set; }
         public DbSet<DegreeType> DegreeTypes { get; set; }
         public DbSet<CollegeType> CollegeTypes { get; set; }
+        public DbSet<ImportSource> ImportSources { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

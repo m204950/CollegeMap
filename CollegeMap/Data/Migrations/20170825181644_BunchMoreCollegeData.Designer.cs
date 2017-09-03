@@ -8,9 +8,10 @@ using CollegeMap.Data;
 namespace CollegeMap.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170825181644_BunchMoreCollegeData")]
+    partial class BunchMoreCollegeData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -130,22 +131,6 @@ namespace CollegeMap.Data.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("DegreeTypes");
-                });
-
-            modelBuilder.Entity("CollegeMap.Models.CollegeMapModels.ImportSource", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("ImportTime");
-
-                    b.Property<string>("Source");
-
-                    b.Property<string>("Version");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("ImportSources");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>

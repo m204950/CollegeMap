@@ -20,7 +20,6 @@ namespace CollegeMap.Models.CollegeMapViewModels
 
         [Required]
         [Display(Name = "Min Enrollment")]
-        [Range(300, 100000)]
         public int MinimumEnrollment { get; set; }
 
         [Display(Name = "College Name Contains")]
@@ -28,7 +27,6 @@ namespace CollegeMap.Models.CollegeMapViewModels
 
         [Required]
         [Display(Name = "Max Enrollment")]
-        [Range(300, 100000)]
         public int MaximumEnrollment { get; set; }
 
         [Required]
@@ -50,6 +48,10 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public float HomeLatitude { get; set; }
 
         public float HomeLongitude { get; set; }
+
+        public string CollegeDataProvider { get; set; }
+
+        public string CollegeDataVersion { get; set; }
 
         public List<SelectListItem> CollegeTypes { get; set; }
 

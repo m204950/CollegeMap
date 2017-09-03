@@ -21,13 +21,16 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public int Enrollment { get; set; }
 
         [Required]
-        [Display(Name = "Annual Tuition")]
+        [Display(Name = "Tuition - In State")]
         public int AnnualTuition { get; set; }
 
-        // zero if not available.  view to display N/A when zero
         [Required]
-        [Display(Name = "Annual Room And Board")]
-        public int AnnualRoomAndBoard { get; set; }
+        [Display(Name = "Tuition - Out of State")]
+        public int AnnualTuitionOut { get; set; }
+
+        [Required]
+        [Display(Name = "Average Annual Net Cost")]
+        public int AvgNetPrice { get; set; }
 
         [Url]
         public string Website { get; set; }
@@ -42,6 +45,9 @@ namespace CollegeMap.Models.CollegeMapViewModels
         [Required]
         [Display(Name = "Highest Degree Offered")]
         public int DegreeTypeID { get; set; }
+
+        [Required]
+        public float AcceptanceRate { get; set; }
 
         // Used for edit
         public int ID { get; set; }

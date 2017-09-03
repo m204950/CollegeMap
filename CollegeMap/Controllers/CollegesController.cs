@@ -12,6 +12,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.IO;
 using Newtonsoft.Json;
+using CsvHelper;
+using X.PagedList;
 
 namespace CollegeMap.Controllers
 {
@@ -69,9 +71,21 @@ namespace CollegeMap.Controllers
         }
 
         // GET: Colleges
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page, string searchString)
         {
-            return View(await _context.Colleges.Include(c => c.Type).Include(c => c.HighestDegreeOffered).ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            int pageNumber = page ?? 1; // if no page was specified in the querystring, default to the first page (1)
+            IEnumerable<College> colleges = await _context.Colleges.
+                Include(c => c.Type).Include(c => c.HighestDegreeOffered).
+                OrderBy(c => c.Name).
+                ToListAsync();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                colleges = colleges.Where(c => c.Name.ToUpper().Contains(searchString.ToUpper()));
+            }
+            var onePageOfColleges = colleges.ToPagedList(pageNumber, 25);
+            return View(onePageOfColleges);
         }
 
         // GET: Colleges/Details/5
@@ -123,7 +137,9 @@ namespace CollegeMap.Controllers
                     Description = addCollegeViewModel.Description,
                     Enrollment = addCollegeViewModel.Enrollment,
                     AnnualTuition = addCollegeViewModel.AnnualTuition,
-                    AnnualRoomAndBoard = addCollegeViewModel.AnnualRoomAndBoard,
+                    AnnualTuitionOut = addCollegeViewModel.AnnualTuitionOut,
+                    AcceptanceRate = addCollegeViewModel.AcceptanceRate,
+                    AvgNetPrice = addCollegeViewModel.AvgNetPrice,
                     Website = addCollegeViewModel.Website,
                     Address = addCollegeViewModel.Address,
                     Latitude = location.Lat,
@@ -157,8 +173,10 @@ namespace CollegeMap.Controllers
             AddCollegeViewModel addCollegeViewModel = new AddCollegeViewModel(collegeTypes, degreeTypes);
             addCollegeViewModel.ID = (int)id;
             addCollegeViewModel.Address = college.Address;
-            addCollegeViewModel.AnnualRoomAndBoard = college.AnnualRoomAndBoard;
             addCollegeViewModel.AnnualTuition = college.AnnualTuition;
+            addCollegeViewModel.AnnualTuitionOut = college.AnnualTuitionOut;
+            addCollegeViewModel.AcceptanceRate = college.AcceptanceRate;
+            addCollegeViewModel.AvgNetPrice = college.AvgNetPrice;
             addCollegeViewModel.CollegeTypeID = college.Type.ID;
             addCollegeViewModel.DegreeTypeID = college.HighestDegreeOffered.ID;
             addCollegeViewModel.Description = college.Description;
@@ -196,8 +214,10 @@ namespace CollegeMap.Controllers
                                 college.Latitude = location.Lat;
                                 college.Longitude = location.Lon;
 
-                                college.AnnualRoomAndBoard = addCollegeViewModel.AnnualRoomAndBoard;
                                 college.AnnualTuition = addCollegeViewModel.AnnualTuition;
+                                college.AnnualTuitionOut = addCollegeViewModel.AnnualTuitionOut;
+                                college.AcceptanceRate = addCollegeViewModel.AcceptanceRate;
+                                college.AvgNetPrice = addCollegeViewModel.AvgNetPrice;
                                 college.Type = newCollegeType;
                                 college.HighestDegreeOffered = newDegreeType;
                                 college.Description = addCollegeViewModel.Description;
@@ -258,6 +278,125 @@ namespace CollegeMap.Controllers
         {
             return View();
         }
+
+        // GET: Colleges/Import
+        public async Task<IActionResult> Import(string source, string version)
+        {
+            ViewData["ImportMessage"] = "Import Fail";
+            if (source == null)
+            {
+                source = "No source specified";
+            }
+            if (version == null)
+            {
+                version = "No version specified";
+            }
+            ImportSource importSource = new ImportSource
+            {
+                Source = source,
+                Version = version,
+                ImportTime = DateTime.Now
+            };
+            _context.Add(importSource);
+            await _context.SaveChangesAsync();
+
+            string path = @"C:\Users\m204950\Downloads\EssentialCollegeData.csv";
+                using (FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate))
+                {
+
+                    using (StreamReader sr = new StreamReader(fileStream))
+                    {
+                        var reader = new CsvReader(sr);
+
+                        //CSVReader will now read the whole file into an enumerable
+                        IEnumerable<Csv_CollegeImport> records = reader.GetRecords<Csv_CollegeImport>();
+                        //int count = records.Count();
+                        foreach (Csv_CollegeImport entry in records)
+                        {
+                            // only use if some cost information is available
+                            if (entry.TUITIONFEE_IN != -1 || entry.TUITIONFEE_OUT != -1 || entry.NetPrice != -1)
+                            {
+                                DegreeType highDeg = ConvertImportedDegreeType(entry.HIGHDEG);
+                                CollegeType collegeType = ConvertImportedCollegeType(entry.CONTROL);
+                                College college = new College
+                                {
+                                    Name = entry.INSTNM,
+                                    Enrollment = entry.UGDS,
+                                    AnnualTuition = entry.TUITIONFEE_IN,
+                                    AnnualTuitionOut = entry.TUITIONFEE_OUT,
+                                    AvgNetPrice = entry.NetPrice,
+                                    AcceptanceRate = entry.ADM_RATE,
+                                    Website = "http://" + entry.INSTURL,
+                                    Address = entry.CITY + ", " + entry.STABBR + " " + entry.ZIP,
+                                    Latitude = entry.LATITUDE,
+                                    Longitude = entry.LONGITUDE,
+
+                                    Type = collegeType,
+                                    HighestDegreeOffered = highDeg
+                                };
+                                _context.Add(college);
+                            }
+
+                        }
+                        await _context.SaveChangesAsync();
+                        ViewData["ImportMessage"] = "Import Success";
+
+                    }
+                }
+            //           return RedirectToAction("Maintenance",);
+            return View();
+        }
+
+        private DegreeType ConvertImportedDegreeType(int highDeg)
+        {
+            DegreeType degreeType;
+            switch (highDeg)
+            {
+                case 0:
+                    degreeType = _context.DegreeTypes.Single(c => c.Name == "Non-degree-granting");
+                    break;
+                case 1:
+                    degreeType = _context.DegreeTypes.Single(c => c.Name == "Certificate");
+                    break;
+                case 2:
+                    degreeType = _context.DegreeTypes.Single(c => c.Name == "Associate");
+                    break;
+                case 3:
+                    degreeType = _context.DegreeTypes.Single(c => c.Name == "Bachelors");
+                    break;
+                case 4:
+                    degreeType = _context.DegreeTypes.Single(c => c.Name == "Graduate");
+                    break;
+                default:
+                    degreeType = _context.DegreeTypes.Single(c => c.Name == "Non-degree-granting");
+                    break;
+            }
+            return degreeType;
+
+        }
+
+        private CollegeType ConvertImportedCollegeType(int importedCollegeType)
+        {
+            CollegeType collegeType;
+            switch (importedCollegeType)
+            {
+                case 1:
+                    collegeType = _context.CollegeTypes.Single(c => c.Name == "Public");
+                    break;
+                case 2:
+                    collegeType = _context.CollegeTypes.Single(c => c.Name == "Private nonprofit");
+                    break;
+                case 3:
+                    collegeType = _context.CollegeTypes.Single(c => c.Name == "Private for-profit");
+                    break;
+                default:
+                    collegeType = _context.CollegeTypes.Single(c => c.Name == "Unknown");
+                    break;
+            }
+            return collegeType;
+
+        }
+
 
         private bool CollegeExists(int id)
         {

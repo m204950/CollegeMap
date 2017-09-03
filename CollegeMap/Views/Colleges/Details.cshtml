@@ -17,12 +17,6 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt>
             Highest Degree Offered
         </dt>
         <dd>
@@ -41,16 +35,60 @@
             @Html.DisplayFor(model => model.Enrollment)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.AcceptanceRate)
+        </dt>
+        <dd>
+            @if (Model.AcceptanceRate == -1)
+            {
+                <text>N/A</text>
+
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.AcceptanceRate)
+            }
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.AnnualTuition)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AnnualTuition)
+            @if (Model.AnnualTuition == -1)
+            {
+                <text>N/A</text>
+
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.AnnualTuition)
+            }
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AnnualRoomAndBoard)
+            @Html.DisplayNameFor(model => model.AnnualTuitionOut)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AnnualRoomAndBoard)
+            @if (Model.AnnualTuitionOut == -1)
+            {
+                <text>N/A</text>
+
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.AnnualTuitionOut)
+            }
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AvgNetPrice)
+        </dt>
+        <dd>
+            @if (Model.AvgNetPrice == -1)
+            {
+                <text>N/A</text>
+
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.AvgNetPrice)
+            }
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Website)
@@ -65,8 +103,4 @@
             @Html.DisplayFor(model => model.Address)
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
 </div>
