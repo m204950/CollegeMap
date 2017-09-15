@@ -15,6 +15,7 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public string HomeAddress { get; set; }
 
         [Required]
+        [Range(10, 100000)]
         [Display(Name = "Max Travel Dist. (mi)")]
         public int MaxTravel { get; set; }
 
@@ -25,12 +26,15 @@ namespace CollegeMap.Models.CollegeMapViewModels
         [Display(Name = "College Name Contains")]
         public string NameContains { get; set; }
 
+        [Display(Name = "Address Contains")]
+        public string AddressContains { get; set; }
+
         [Required]
         [Display(Name = "Max Enrollment")]
         public int MaximumEnrollment { get; set; }
 
         [Required]
-        [Display(Name = "Max Tuition plus R&B")]
+        [Display(Name = "Max Average Net Total Cost")]
         [DisplayFormat(DataFormatString = "{0:c}")]
         [Range(300, 1000000)]
         public int MaxTotalCost { get; set; }
@@ -52,6 +56,8 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public string CollegeDataProvider { get; set; }
 
         public string CollegeDataVersion { get; set; }
+
+        public string DistanceMessage { get; set; }
 
         public List<SelectListItem> CollegeTypes { get; set; }
 

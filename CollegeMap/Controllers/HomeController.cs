@@ -48,7 +48,7 @@ namespace CollegeMap.Controllers
             queryCollegeViewModel.MinimumEnrollment = _context.Colleges.Min(c => c.Enrollment);
             // set default maximum enrollment to minimum value in DB
             queryCollegeViewModel.MaximumEnrollment = _context.Colleges.Max(c => c.Enrollment);
-            queryCollegeViewModel.MaxTotalCost = _context.Colleges.Max(c => c.AnnualTuition);
+            queryCollegeViewModel.MaxTotalCost = _context.Colleges.Max(c => c.AvgNetPrice);
             return View(queryCollegeViewModel);
         }
 
@@ -92,6 +92,16 @@ namespace CollegeMap.Controllers
                     nameContains = queryCollegeViewModel.NameContains;
                 }
 
+                string addressContains;
+                if (queryCollegeViewModel.AddressContains == null)
+                {
+                    addressContains = "";
+                }
+                else
+                {
+                    addressContains = queryCollegeViewModel.AddressContains;
+                }
+
                 IEnumerable<ImportSource> importSources = _context.ImportSources.ToList();
                 ImportSource latestImport = importSources.OrderByDescending(i => i.ImportTime).FirstOrDefault();
                 queryCollegeViewModel.CollegeDataProvider = latestImport.Source;
@@ -101,31 +111,40 @@ namespace CollegeMap.Controllers
                     Where(c => c.Latitude <= maxLat).Where(c => c.Latitude >= minLat).
                     Where(c => c.Longitude <= maxLon).Where(c => c.Longitude >= minLon).
                     Where(c => c.Enrollment <= maxEnrollment).Where(c => c.Enrollment >= minEnrollment).
-                    Where(c => c.AnnualTuition  <= maxTotalCost).
+                    Where(c => c.AvgNetPrice  <= maxTotalCost).
                     Where(c => c.Name.ToUpper().Contains(nameContains.ToUpper())).
+                    Where(c => c.Address.ToUpper().Contains(addressContains.ToUpper())).
                     // following relies on degree types having ascending IDs corresponding to their level
                     Where(c => c.HighestDegreeOffered.ID >= desiredDegreeLevelID).
                     Where(c => collegeTypeIDs.Contains(c.Type.ID)).OrderBy(c => c.Name).
                     Include(c => c.Type).Include(c => c.HighestDegreeOffered).
-  //                  OrderBy(c => c.Distance).
+ //                   OrderBy(c => c.Distance).
                     ToListAsync();
 
-                    // loop in reverse since deletion of entries affects indices
-                    for (int i = queryCollegeViewModel.Colleges.Count - 1; i >= 0 ; i--)
+                // loop in reverse since deletion of entries affects indices
+                for (int i = queryCollegeViewModel.Colleges.Count - 1; i >= 0 ; i--)
+                {
+                    College thisCollege = queryCollegeViewModel.Colleges[i];
+                    int collegeDistance = (int)Math.Round(Distance(thisCollege.Latitude, thisCollege.Longitude, homeLocation.Lat, homeLocation.Lon, 'M'), 0);
+                    if (collegeDistance > maxTravel)
                     {
-                        College thisCollege = queryCollegeViewModel.Colleges[i];
-                        int collegeDistance = (int)Math.Round(Distance(thisCollege.Latitude, thisCollege.Longitude, homeLocation.Lat, homeLocation.Lon, 'M'), 0);
-                        if (collegeDistance > maxTravel)
-                        {
-                            queryCollegeViewModel.Colleges.RemoveAt(i);
-                        }
-                        else
-                        {
-                            queryCollegeViewModel.Colleges[i].Distance = collegeDistance;
-                        }
-
+                        queryCollegeViewModel.Colleges.RemoveAt(i);
                     }
-             }
+                    else
+                    {
+                        queryCollegeViewModel.Colleges[i].Distance = collegeDistance;
+                    }
+
+                }
+                queryCollegeViewModel.DistanceMessage = "* Distance shown is Great Circle distance.";
+                // refine distance to driving distance if small enough
+
+                if (queryCollegeViewModel.Colleges.Count < College.MAX_DRIVE_DIST_ENTRIES)
+                {
+                    queryCollegeViewModel = await DetermineDrivingDistance(homeAddress, queryCollegeViewModel, maxTravel);
+                    queryCollegeViewModel.DistanceMessage = "* Distance shown is driving distance.";
+                }
+            }
 
             IEnumerable<CollegeType> collegeTypes = _context.CollegeTypes.ToList();
             IEnumerable<DegreeType> degreeTypes = _context.DegreeTypes.ToList();
@@ -157,6 +176,54 @@ namespace CollegeMap.Controllers
         public IActionResult Error()
         {
             return View();
+        }
+
+        private async Task<QueryCollegeViewModel> DetermineDrivingDistance(string homeAddress, QueryCollegeViewModel queryCollegeViewModel, int maxTravel)
+        {
+            //Pass request to google api with orgin and destination details
+            string origins = "&origins=" + Regex.Replace(homeAddress, "\\s+", "+");
+            string destinations = "&destinations=";
+
+            foreach (College college in queryCollegeViewModel.Colleges)
+            {
+                destinations += college.Address + "|";
+            }
+            destinations = Regex.Replace(destinations, "\\s+", "+");
+
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial"
+                + origins + destinations
+                + "&mode=Car&language=us-en&sensor=false&key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U");
+
+
+            WebResponse response = await request.GetResponseAsync();
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                var result = streamReader.ReadToEnd();
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    JSON_Distance.Rootobject rootData = JsonConvert.DeserializeObject<JSON_Distance.Rootobject>(result);
+                    // loop in reverse since deletion of entries affects indices
+                    for (int i = queryCollegeViewModel.Colleges.Count - 1; i >= 0; i--)
+                    {
+                        //int collegeDistance = rootData.rows[0].elements[i].distance.value;
+                        string collegeDistanceStr = rootData.rows[0].elements[i].distance.text.Replace("mi", "");
+                        collegeDistanceStr = collegeDistanceStr.Replace("ft", "");
+                        int collegeDistance = (int)Math.Round(float.Parse(collegeDistanceStr), 0);
+                        if (collegeDistance > maxTravel)
+                        {
+                            queryCollegeViewModel.Colleges.RemoveAt(i);
+                        }
+                        else
+                        {
+                            queryCollegeViewModel.Colleges[i].Distance = collegeDistance;
+                        }
+
+                    }
+                }
+            }
+            return queryCollegeViewModel;
         }
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         //:::                                                                         :::
@@ -219,5 +286,6 @@ namespace CollegeMap.Controllers
             {
                 return (rad / Math.PI * 180.0);
             }
+            
     }
 }

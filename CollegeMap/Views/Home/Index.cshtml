@@ -4,8 +4,8 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h3>College Selection Criteria</h3>
 <h4><strong>Data Source:</strong> @Model.CollegeDataProvider, <strong>Version:</strong> @Model.CollegeDataVersion</h4>
+<h3>College Selection Criteria</h3>
 
 <form asp-action="Query">
     <div class="row">
@@ -29,6 +29,12 @@
                 <div class="col-md-8">
                     <input asp-for="NameContains" class="form-control" />
                     <span asp-validation-for="NameContains" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <label asp-for="AddressContains" class="col-md-4 control-label"></label>
+                <div class="col-md-8">
+                    <input asp-for="AddressContains" class="form-control" />
+                    <span asp-validation-for="AddressContains" class="text-danger"></span>
                 </div>
                 <label asp-for="MaxTotalCost" class="col-md-4 control-label"></label>
                 <div class="col-md-8">
@@ -89,7 +95,7 @@
                             Details
                         </th>
                         <th>
-                            Distance
+                            Distance *
                         </th>
                     </tr>
                 </thead>
@@ -115,6 +121,7 @@
                                     }
                 </tbody>
             </table>
+            <p>@Model.DistanceMessage</p>
         </div>
         <div class="col-md-6">
             <div id="map"></div>
