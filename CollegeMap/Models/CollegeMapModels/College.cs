@@ -43,6 +43,7 @@ namespace CollegeMap.Models.CollegeMapModels
         [DisplayFormat(DataFormatString = "{0:c0}")]
         public int AvgNetPrice { get; set; }
 
+        public string State { get; set; }
         public string Website { get; set; }
         // Address can be anything google maps can handle
         public string Address { get; set; }

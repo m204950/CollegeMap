@@ -39,6 +39,11 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public string Address { get; set; }
 
         [Required]
+        [Display(Name = "Two Character State Abbreviation")]
+        [StringLength(2, ErrorMessage = "The State Abbreviation must be 2 characters.")]
+        public string State { get; set; }
+
+        [Required]
         [Display(Name = "College Type")]
         public int CollegeTypeID { get; set; }
 

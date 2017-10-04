@@ -173,6 +173,7 @@ namespace CollegeMap.Controllers
             AddCollegeViewModel addCollegeViewModel = new AddCollegeViewModel(collegeTypes, degreeTypes);
             addCollegeViewModel.ID = (int)id;
             addCollegeViewModel.Address = college.Address;
+            addCollegeViewModel.State = college.State;
             addCollegeViewModel.AnnualTuition = college.AnnualTuition;
             addCollegeViewModel.AnnualTuitionOut = college.AnnualTuitionOut;
             addCollegeViewModel.AcceptanceRate = college.AcceptanceRate;
@@ -208,6 +209,7 @@ namespace CollegeMap.Controllers
                                     _context.CollegeTypes.Single(c => c.ID == addCollegeViewModel.CollegeTypeID);
                                 DegreeType newDegreeType =
                                     _context.DegreeTypes.Single(c => c.ID == addCollegeViewModel.DegreeTypeID);
+                                college.State = addCollegeViewModel.State;
                                 college.Address = addCollegeViewModel.Address;
 
                                 Location location = await GetLocationFromAddress(addCollegeViewModel.Address);
@@ -330,6 +332,7 @@ namespace CollegeMap.Controllers
                                     Address = entry.CITY + ", " + entry.STABBR + " " + entry.ZIP,
                                     Latitude = entry.LATITUDE,
                                     Longitude = entry.LONGITUDE,
+                                    State = entry.STABBR,
 
                                     Type = collegeType,
                                     HighestDegreeOffered = highDeg

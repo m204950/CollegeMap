@@ -14,10 +14,10 @@ namespace CollegeMap.Models.CollegeMapViewModels
         [Display(Name = "Home Address")]
         public string HomeAddress { get; set; }
 
-        [Required]
-        [Range(10, 100000)]
+        // [Required]
+        // [Range(10, 100000)]
         [Display(Name = "Max Travel Dist. (mi)")]
-        public int MaxTravel { get; set; }
+        public int? MaxTravel { get; set; }
 
         [Required]
         [Display(Name = "Min Enrollment")]
@@ -44,6 +44,10 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public IEnumerable<int> CollegeTypeIDs { get; set; }
 
         [Required]
+        [Display(Name = "States to search (multi-select)")]
+        public IEnumerable<string> StateIDs { get; set; }
+
+        [Required]
         [Display(Name = "Highest Degree Level Needed")]
         public int DegreeTypeID { get; set; }
 
@@ -62,6 +66,8 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public List<SelectListItem> CollegeTypes { get; set; }
 
         public List<SelectListItem> DegreeTypes { get; set; }
+
+        public List<SelectListItem> States { get; set; }
 
         public void CreateDegreeTypeSelects(IEnumerable<DegreeType> degreeTypes)
         {
@@ -92,15 +98,34 @@ namespace CollegeMap.Models.CollegeMapViewModels
             }
 
         }
+
+        public void CreateStateSelects(IEnumerable<string> states)
+        {
+            States = new List<SelectListItem>();
+
+            foreach (string state in states)
+            {
+                States.Add(new SelectListItem
+                {
+                    Value = state,
+                    Text = state,
+                    Selected = true
+                });
+            }
+
+        }
+
         public QueryCollegeViewModel()
         {
         }
 
-        public QueryCollegeViewModel(IEnumerable<CollegeType> collegeTypes, IEnumerable<DegreeType> degreeTypes)
+        public QueryCollegeViewModel(IEnumerable<CollegeType> collegeTypes, IEnumerable<DegreeType> degreeTypes,
+            IEnumerable<string> states)
         {
 
             CreateCollegeTypeSelects(collegeTypes);
             CreateDegreeTypeSelects(degreeTypes);
+            CreateStateSelects(states);
         }
     }
 }
