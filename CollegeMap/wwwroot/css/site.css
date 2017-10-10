@@ -48,3 +48,9 @@ textarea {
         display: none;
     }
 }
+
+body {
+    // background-image: url('http://illinois.edu/assets/img/admissions/ilfacts.jpg');
+    background-color: lightskyblue;
+    // background-blend-mode: screen;
+}
