@@ -135,6 +135,7 @@ namespace CollegeMap.Controllers
                 {
                     Name = addCollegeViewModel.Name,
                     Description = addCollegeViewModel.Description,
+                    CollegeScorecardID = addCollegeViewModel.CollegeScorecardID,
                     Enrollment = addCollegeViewModel.Enrollment,
                     AnnualTuition = addCollegeViewModel.AnnualTuition,
                     AnnualTuitionOut = addCollegeViewModel.AnnualTuitionOut,
@@ -172,6 +173,7 @@ namespace CollegeMap.Controllers
             IEnumerable<DegreeType> degreeTypes = _context.DegreeTypes.ToList();
             AddCollegeViewModel addCollegeViewModel = new AddCollegeViewModel(collegeTypes, degreeTypes);
             addCollegeViewModel.ID = (int)id;
+            addCollegeViewModel.CollegeScorecardID = college.CollegeScorecardID;
             addCollegeViewModel.Address = college.Address;
             addCollegeViewModel.State = college.State;
             addCollegeViewModel.AnnualTuition = college.AnnualTuition;
@@ -215,6 +217,8 @@ namespace CollegeMap.Controllers
                                 Location location = await GetLocationFromAddress(addCollegeViewModel.Address);
                                 college.Latitude = location.Lat;
                                 college.Longitude = location.Lon;
+
+                                college.CollegeScorecardID = addCollegeViewModel.CollegeScorecardID;
 
                                 college.AnnualTuition = addCollegeViewModel.AnnualTuition;
                                 college.AnnualTuitionOut = addCollegeViewModel.AnnualTuitionOut;
@@ -323,6 +327,7 @@ namespace CollegeMap.Controllers
                                 College college = new College
                                 {
                                     Name = entry.INSTNM,
+                                    CollegeScorecardID = entry.UNITID,
                                     Enrollment = entry.UGDS,
                                     AnnualTuition = entry.TUITIONFEE_IN,
                                     AnnualTuitionOut = entry.TUITIONFEE_OUT,

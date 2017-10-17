@@ -16,6 +16,10 @@ namespace CollegeMap.Models.CollegeMapModels
         public string Description { get; set; }
         public int ID { get; set; }
 
+        // CollegeScorecard.com ID
+        [Display(Name = "CollegeScorecard.com ID")]
+        public int CollegeScorecardID { get; set; }
+
         // Non-Degree, Certificat, Associate, Bachelors, Graduate
         [Display(Name = "Highest Degree")]
         public DegreeType HighestDegreeOffered { get; set; }

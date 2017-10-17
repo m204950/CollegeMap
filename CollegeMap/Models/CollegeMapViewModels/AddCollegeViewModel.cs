@@ -18,6 +18,10 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public string Description { get; set; }
 
         [Required]
+        [Display(Name = "CollegeScorecard.com ID")]
+        public int CollegeScorecardID { get; set; }
+
+        [Required]
         public int Enrollment { get; set; }
 
         [Required]

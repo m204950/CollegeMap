@@ -46,7 +46,7 @@ namespace CollegeMap.Controllers
             queryCollegeViewModel.CollegeDataVersion = latestImport.Version;
 
             // set default minimum enrollment to minimum value in DB
-            queryCollegeViewModel.MinimumEnrollment = _context.Colleges.Min(c => c.Enrollment);
+            queryCollegeViewModel.MinimumEnrollment = _context.Colleges.Where(c => c.Enrollment > 0).Min(c => c.Enrollment);
             // set default maximum enrollment to minimum value in DB
             queryCollegeViewModel.MaximumEnrollment = _context.Colleges.Max(c => c.Enrollment);
             queryCollegeViewModel.MaxTotalCost = _context.Colleges.Max(c => c.AvgNetPrice);
