@@ -145,7 +145,7 @@ namespace CollegeMap.Controllers
                     Address = addCollegeViewModel.Address,
                     Latitude = location.Lat,
                     Longitude = location.Lon,
-
+                    State = addCollegeViewModel.State,
                     Type = newCollegeType,
                     HighestDegreeOffered = newDegreeType
                 };
