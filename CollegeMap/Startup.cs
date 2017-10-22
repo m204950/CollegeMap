@@ -40,9 +40,13 @@ namespace CollegeMap
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+#if DEBUG
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+#else
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DeployedConnection")));
+#endif
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();

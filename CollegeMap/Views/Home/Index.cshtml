@@ -142,9 +142,20 @@
             <p>** College Scorecard Info Not Always Available</p>
         </div>
         <div class="col-md-6">
-            <div id="map"></div>
+            @if (Model.Colleges.Count > 50)
+            {
+                <h3>Too many matches to map.  Narrow selection criteria to less than 50 matches.</h3>
+
+            }
+            else
+            {
+                <div id="map"></div>
+            }
         </div>
     </div>
+
+    @if (Model.Colleges.Count < 51)
+    {
 
     <script>
     var newMarker;
@@ -185,5 +196,6 @@
             <script async defer
                     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U&callback=initMap">
             </script>
-                                        }
-                                    }
+        }
+    }
+}
