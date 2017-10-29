@@ -1,5 +1,11 @@
 ﻿@model CollegeMap.Models.CollegeMapViewModels.QueryCollegeViewModel
 
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+
+<!-- import the included stylesheet for some (very basic) default styling -->
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -82,7 +88,7 @@
 
 @if (Model.Colleges != null)
 {
-    @if (Model.Colleges.Count < 1)
+    @if (Model.OnePageOfColleges.Count < 1)
     {
         <h3>No Colleges Found for Selection Criteria</h3>
 
@@ -115,7 +121,7 @@
                 </thead>
                 <tbody>
                     @{ var mapIndex = 1; }
-                    @foreach (var item in Model.Colleges)
+                    @foreach (var item in Model.OnePageOfColleges)
                     {
                         <tr>
                             <td>
@@ -140,22 +146,17 @@
             </table>
             <p>@Model.DistanceMessage</p>
             <p>** College Scorecard Info Not Always Available</p>
+            <!-- output a paging control that lets the user navigation to the previous page, next page, etc -->
+            @Html.PagedListPager((IPagedList)Model.OnePageOfColleges, page => Url.Action("Index", new
+               {
+                   page
+               }))
         </div>
         <div class="col-md-6">
-            @if (Model.Colleges.Count > 50)
-            {
-                <h3>Too many matches to map.  Narrow selection criteria to less than 50 matches.</h3>
-
-            }
-            else
-            {
                 <div id="map"></div>
-            }
         </div>
     </div>
 
-    @if (Model.Colleges.Count < 51)
-    {
 
     <script>
     var newMarker;
@@ -176,7 +177,7 @@
 
         var labelIndex = 1;
 
-        @foreach (var item in Model.Colleges)
+        @foreach (var item in Model.OnePageOfColleges)
         {
             <text>
             var marker = new google.maps.Marker({
@@ -197,5 +198,5 @@
                     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U&callback=initMap">
             </script>
         }
-    }
+    
 }

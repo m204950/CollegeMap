@@ -12,19 +12,22 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using static CollegeMap.Controllers.CollegesController;
+using X.PagedList;
+// using System.Web;
 
 namespace CollegeMap.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private QueryCollegeViewModel queryCollegeViewModelCache;
 
         public HomeController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
             /* query components
              * text that is contained in College Name
@@ -40,16 +43,30 @@ namespace CollegeMap.Controllers
             IEnumerable<String> states = _context.Colleges.OrderBy(c => c.State).Select(c => c.State).Distinct().ToList();
 
             ImportSource latestImport = importSources.OrderByDescending(i => i.ImportTime).FirstOrDefault();
- 
-            QueryCollegeViewModel queryCollegeViewModel = new QueryCollegeViewModel(collegeTypes, degreeTypes, states);
-            queryCollegeViewModel.CollegeDataProvider = latestImport.Source;
-            queryCollegeViewModel.CollegeDataVersion = latestImport.Version;
 
-            // set default minimum enrollment to minimum value in DB
-            queryCollegeViewModel.MinimumEnrollment = _context.Colleges.Where(c => c.Enrollment > 0).Min(c => c.Enrollment);
-            // set default maximum enrollment to minimum value in DB
-            queryCollegeViewModel.MaximumEnrollment = _context.Colleges.Max(c => c.Enrollment);
-            queryCollegeViewModel.MaxTotalCost = _context.Colleges.Max(c => c.AvgNetPrice);
+            QueryCollegeViewModel queryCollegeViewModel = new QueryCollegeViewModel(collegeTypes, degreeTypes, states);
+            if (page == null || queryCollegeViewModelCache == null)
+            // temporarily use globals while working issue with Current.Session
+            //                if (page == null || System.Web.HttpContext.Current.Session["queryViewModel"] == null)
+            {
+                queryCollegeViewModel.CollegeDataProvider = latestImport.Source;
+                queryCollegeViewModel.CollegeDataVersion = latestImport.Version;
+
+                // set default minimum enrollment to minimum value in DB
+                queryCollegeViewModel.MinimumEnrollment = _context.Colleges.Where(c => c.Enrollment > 0).Min(c => c.Enrollment);
+                // set default maximum enrollment to minimum value in DB
+                queryCollegeViewModel.MaximumEnrollment = _context.Colleges.Max(c => c.Enrollment);
+                queryCollegeViewModel.MaxTotalCost = _context.Colleges.Max(c => c.AvgNetPrice);
+            }
+            else
+            {
+                // temporarily use globals while working issue with Current.Session
+                // queryCollegeViewModel = (QueryCollegeViewModel)System.Web.HttpContext.Current.Session["queryViewModel"];
+                queryCollegeViewModel = queryCollegeViewModelCache;
+
+                queryCollegeViewModel.OnePageOfColleges = queryCollegeViewModel.Colleges.ToPagedList((int) page, 25);
+
+            }
             return View(queryCollegeViewModel);
         }
 
@@ -154,6 +171,9 @@ namespace CollegeMap.Controllers
                     queryCollegeViewModel = await DetermineDrivingDistance(homeAddress, queryCollegeViewModel, maxTravel);
 
                 }
+
+                queryCollegeViewModel.OnePageOfColleges = queryCollegeViewModel.Colleges.ToPagedList(1, 25);
+
             }
 
             IEnumerable<CollegeType> collegeTypes = _context.CollegeTypes.ToList();
@@ -162,6 +182,10 @@ namespace CollegeMap.Controllers
             queryCollegeViewModel.CreateCollegeTypeSelects(collegeTypes);
             queryCollegeViewModel.CreateDegreeTypeSelects(degreeTypes);
             queryCollegeViewModel.CreateStateSelects(states);
+
+            System.Web.HttpContext.Current.Session["queryViewModel"] = queryCollegeViewModel;
+            // temporarily use globals while working issue with Current.Session
+            queryCollegeViewModelCache = queryCollegeViewModel;
 
             return View("Index", queryCollegeViewModel);
         }

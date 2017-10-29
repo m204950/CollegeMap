@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace CollegeMap.Models.CollegeMapViewModels
 {
@@ -52,6 +53,8 @@ namespace CollegeMap.Models.CollegeMapViewModels
         public int DegreeTypeID { get; set; }
 
         public List<College> Colleges { get; set; }
+
+        public IPagedList<College> OnePageOfColleges { get; set; }
 
         public float HomeLatitude { get; set; }
 
