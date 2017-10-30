@@ -11,7 +11,8 @@ namespace CollegeMap.Models.CollegeMapModels
     {
         // maximum number of entries to use google api to compute driving distance
         public const int MAX_DRIVE_DIST_ENTRIES = 15;
-
+        // maximum number of colleges to display per page
+        public const int COLLEGES_PER_PAGE = 25;
         public string Name { get; set; }
         public string Description { get; set; }
         public int ID { get; set; }

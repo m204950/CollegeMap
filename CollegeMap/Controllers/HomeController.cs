@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using static CollegeMap.Controllers.CollegesController;
 using X.PagedList;
+using Microsoft.Extensions.Caching.Memory;
 // using System.Web;
 
 namespace CollegeMap.Controllers
@@ -21,10 +22,12 @@ namespace CollegeMap.Controllers
     {
         private readonly ApplicationDbContext _context;
         private QueryCollegeViewModel queryCollegeViewModelCache;
+        private IMemoryCache _cache;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(ApplicationDbContext context, IMemoryCache memoryCache)
         {
             _context = context;
+            _cache = memoryCache;
         }
 
         public async Task<IActionResult> Index(int? page)
@@ -45,9 +48,7 @@ namespace CollegeMap.Controllers
             ImportSource latestImport = importSources.OrderByDescending(i => i.ImportTime).FirstOrDefault();
 
             QueryCollegeViewModel queryCollegeViewModel = new QueryCollegeViewModel(collegeTypes, degreeTypes, states);
-            if (page == null || queryCollegeViewModelCache == null)
-            // temporarily use globals while working issue with Current.Session
-            //                if (page == null || System.Web.HttpContext.Current.Session["queryViewModel"] == null)
+            if (page == null || _cache.Get("qcvm") == null)
             {
                 queryCollegeViewModel.CollegeDataProvider = latestImport.Source;
                 queryCollegeViewModel.CollegeDataVersion = latestImport.Version;
@@ -60,11 +61,9 @@ namespace CollegeMap.Controllers
             }
             else
             {
-                // temporarily use globals while working issue with Current.Session
-                // queryCollegeViewModel = (QueryCollegeViewModel)System.Web.HttpContext.Current.Session["queryViewModel"];
-                queryCollegeViewModel = queryCollegeViewModelCache;
+                queryCollegeViewModel = (QueryCollegeViewModel)_cache.Get("qcvm");
 
-                queryCollegeViewModel.OnePageOfColleges = queryCollegeViewModel.Colleges.ToPagedList((int) page, 25);
+                queryCollegeViewModel.OnePageOfColleges = queryCollegeViewModel.Colleges.ToPagedList((int) page, College.COLLEGES_PER_PAGE);
 
             }
             return View(queryCollegeViewModel);
@@ -172,7 +171,7 @@ namespace CollegeMap.Controllers
 
                 }
 
-                queryCollegeViewModel.OnePageOfColleges = queryCollegeViewModel.Colleges.ToPagedList(1, 25);
+                queryCollegeViewModel.OnePageOfColleges = queryCollegeViewModel.Colleges.ToPagedList(1, College.COLLEGES_PER_PAGE);
 
             }
 
@@ -183,9 +182,12 @@ namespace CollegeMap.Controllers
             queryCollegeViewModel.CreateDegreeTypeSelects(degreeTypes);
             queryCollegeViewModel.CreateStateSelects(states);
 
-            System.Web.HttpContext.Current.Session["queryViewModel"] = queryCollegeViewModel;
+            //HttpContext.Session. .Current.Session["queryViewModel"] = queryCollegeViewModel;
             // temporarily use globals while working issue with Current.Session
             queryCollegeViewModelCache = queryCollegeViewModel;
+            _cache.Set("qcvm", queryCollegeViewModel);
+
+            queryCollegeViewModel = (QueryCollegeViewModel) _cache.Get("qcvm");
 
             return View("Index", queryCollegeViewModel);
         }

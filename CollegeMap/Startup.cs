@@ -51,6 +51,7 @@ namespace CollegeMap
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddMemoryCache();
             services.AddMvc();
             // Configure Identity
             services.Configure<IdentityOptions>(options =>

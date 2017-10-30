@@ -84,7 +84,7 @@ namespace CollegeMap.Controllers
             {
                 colleges = colleges.Where(c => c.Name.ToUpper().Contains(searchString.ToUpper()));
             }
-            var onePageOfColleges = colleges.ToPagedList(pageNumber, 25);
+            var onePageOfColleges = colleges.ToPagedList(pageNumber, College.COLLEGES_PER_PAGE);
             return View(onePageOfColleges);
         }
 
