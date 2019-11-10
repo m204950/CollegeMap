@@ -39,15 +39,23 @@ namespace CollegeMap.Models.CollegeMapModels
         public string ZIP { get; set; }
         public string INSTURL { get; set; }
         public int HIGHDEG { get; set; }
-        public float LATITUDE { get; set; }
-        public float LONGITUDE { get; set; }
-        public float ADM_RATE { get; set; }
-        public int ACTCMMID { get; set; }
+        public string LATITUDE { get; set; }   // some entries NULL.  Need to convert to float
+        public string LONGITUDE { get; set; }  // some entries NULL.  Need to convert to float
+        public string ADM_RATE { get; set; }   // some entries NULL.  Need to convert to float
+        public string ACTCMMID { get; set; }   // some entries NULL.  Need to convert to int
         public int CONTROL { get; set; }
-        public int UGDS { get; set; }
-        public int TUITIONFEE_IN { get; set; }
-        public int TUITIONFEE_OUT { get; set; }
-        public int NetPrice { get; set; }
+        // undergraduate enrollment
+        public string UGDS { get; set; }   // some entries NULL.  Need to convert to int
+        // percentage of students that are white
+        public string UGDS_WHITE { get; set; }   // some entries NULL.  Need to convert to float
+        // in state tuition
+        public string TUITIONFEE_IN { get; set; }  // some entries NULL.  Need to convert to int
+        // out of state tuition
+        public string TUITIONFEE_OUT { get; set; }  // some entries NULL.  Need to convert to int
+        // average tuition paid
+        public string TUITFTE { get; set; }  // some entries NULL.  Need to convert to int
+        // completion rate
+        public string C150_4_POOLED_SUPP { get; set; }  // some entries NULL.  Need to convert to float
     }
 
 }

@@ -55,6 +55,13 @@ namespace CollegeMap.Models.CollegeMapModels
         public int Distance { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
+        [Display(Name = "Graduation Rate")]
+        [DisplayFormat(DataFormatString = "{0:P1}")]
+        public float GraduationRate { get; set; }
+
+        [Display(Name = "Percentage of White Students")]
+        [DisplayFormat(DataFormatString = "{0:P1}")]
+        public float PercentWhite { get; set; }
 
     }
 }

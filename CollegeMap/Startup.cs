@@ -4,20 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+// Add using to pickup the new extension methods
+using Microsoft.AspNetCore.Authentication;
+//using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
 using CollegeMap.Data;
 using CollegeMap.Models;
 using CollegeMap.Services;
+using Microsoft.Extensions.Hosting;
 
 namespace CollegeMap
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -47,12 +53,17 @@ namespace CollegeMap
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DeployedConnection")));
 #endif
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>()
+               .AddDefaultTokenProviders();
+            //services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores();
             services.AddMvc();
             // Configure Identity
+            // Cookie settings
+
+            services.ConfigureApplicationCookie(options => options.ExpireTimeSpan = TimeSpan.FromDays(150));
+            services.ConfigureApplicationCookie(options => options.LogoutPath = "/Account/LogOut");
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/LogIn");
+
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings
@@ -66,11 +77,6 @@ namespace CollegeMap
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
                 options.Lockout.MaxFailedAccessAttempts = 10;
 
-                // Cookie settings
-                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(150);
-                options.Cookies.ApplicationCookie.LoginPath = "/Account/LogIn";
-                options.Cookies.ApplicationCookie.LogoutPath = "/Account/LogOut";
-
                 // User settings
                 options.User.RequireUniqueEmail = true;
             });
@@ -78,14 +84,12 @@ namespace CollegeMap
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddMvc(options => options.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -99,7 +103,7 @@ namespace CollegeMap
 
             app.UseStaticFiles();
 
-            app.UseIdentity();
+            app.UseAuthentication();
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 

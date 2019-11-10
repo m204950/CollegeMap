@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using CollegeMap.Models;
 using CollegeMap.Models.AccountViewModels;
 using CollegeMap.Services;
+using Microsoft.AspNetCore.Authentication;
 
 namespace CollegeMap.Controllers
 {
@@ -28,14 +29,12 @@ namespace CollegeMap.Controllers
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IOptions<IdentityCookieOptions> identityCookieOptions,
             IEmailSender emailSender,
             ISmsSender smsSender,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _externalCookieScheme = identityCookieOptions.Value.ExternalCookieAuthenticationScheme;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
@@ -48,7 +47,7 @@ namespace CollegeMap.Controllers
         public async Task<IActionResult> Login(string returnUrl = null)
         {
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.Authentication.SignOutAsync(_externalCookieScheme);
+            await HttpContext.SignOutAsync(_externalCookieScheme);
 
             ViewData["ReturnUrl"] = returnUrl;
             return View();

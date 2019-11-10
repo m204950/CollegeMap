@@ -35,10 +35,24 @@
             @Html.DisplayFor(model => model.Enrollment)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.PercentWhite)
+        </dt>
+        <dd>
+            @if (Model.PercentWhite == 0)
+            {
+                <text>N/A</text>
+
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.PercentWhite)
+            }
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.AcceptanceRate)
         </dt>
         <dd>
-            @if (Model.AcceptanceRate == -1)
+            @if (Model.AcceptanceRate == 0)
             {
                 <text>N/A</text>
 
@@ -49,10 +63,24 @@
             }
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.GraduationRate)
+        </dt>
+        <dd>
+            @if (Model.GraduationRate == 0)
+            {
+                <text>N/A</text>
+
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.GraduationRate)
+            }
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.AnnualTuition)
         </dt>
         <dd>
-            @if (Model.AnnualTuition == -1)
+            @if (Model.AnnualTuition == 0)
             {
                 <text>N/A</text>
 
@@ -66,7 +94,7 @@
             @Html.DisplayNameFor(model => model.AnnualTuitionOut)
         </dt>
         <dd>
-            @if (Model.AnnualTuitionOut == -1)
+            @if (Model.AnnualTuitionOut == 0)
             {
                 <text>N/A</text>
 
@@ -80,7 +108,7 @@
             @Html.DisplayNameFor(model => model.AvgNetPrice)
         </dt>
         <dd>
-            @if (Model.AvgNetPrice == -1)
+            @if (Model.AvgNetPrice == 0)
             {
                 <text>N/A</text>
 

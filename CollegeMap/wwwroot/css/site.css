@@ -48,9 +48,24 @@ textarea {
         display: none;
     }
 }
+@media (min-width: 768px) {
+    .dl-horizontal dt {
+        float: left;
+        width: 300px;
+        overflow: hidden;
+        clear: left;
+        text-align: right;
+        text-overflow: ellipsis;
+        white-space: normal;
+    }
+
+    .dl-horizontal dd {
+        margin-left: 320px;
+    }
+}
 
 body {
-    // background-image: url('http://illinois.edu/assets/img/admissions/ilfacts.jpg');
+    /* background-image: url('http://illinois.edu/assets/img/admissions/ilfacts.jpg');*/
     background-color: lightskyblue;
-    // background-blend-mode: screen;
+    /* background-blend-mode: screen;*/
 }

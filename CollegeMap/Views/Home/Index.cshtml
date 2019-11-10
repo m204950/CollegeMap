@@ -4,83 +4,86 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h4><strong>Data Source:</strong> @Model.CollegeDataProvider, <strong>Version:</strong> @Model.CollegeDataVersion</h4>
-<h3>College Selection Criteria</h3>
+@if (Model != null)
+{
+    <h4><strong>Data Source:</strong> @Model.CollegeDataProvider, <strong>Version:</strong> @Model.CollegeDataVersion</h4>
+    <h3>College Selection Criteria</h3>
 
-<form asp-action="Query">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="row form-group">
-                <!--  rows for first column -->
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <label asp-for="HomeAddress" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <input asp-for="HomeAddress" class="form-control" autofocus />
-                    <span asp-validation-for="HomeAddress" class="text-danger"></span>
+    <form asp-action="Query">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <!--  rows for first column -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <label asp-for="HomeAddress" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="HomeAddress" class="form-control" autofocus />
+                        <span asp-validation-for="HomeAddress" class="text-danger"></span>
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <label asp-for="MaxTravel" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="MaxTravel" class="form-control" />
+                        <span asp-validation-for="MaxTravel" class="text-danger"></span>
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <label asp-for="NameContains" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="NameContains" class="form-control" />
+                        <span asp-validation-for="NameContains" class="text-danger"></span>
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <label asp-for="AddressContains" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="AddressContains" class="form-control" />
+                        <span asp-validation-for="AddressContains" class="text-danger"></span>
+                    </div>
+                    <label asp-for="MaxTotalCost" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="MaxTotalCost" class="form-control" />
+                        <span asp-validation-for="MaxTotalCost" class="text-danger"></span>
+                    </div>
                 </div>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <label asp-for="MaxTravel" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <input asp-for="MaxTravel" class="form-control" />
-                    <span asp-validation-for="MaxTravel" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <!-- Rows for the second column -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <label asp-for="MaximumEnrollment" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="MaximumEnrollment" class="form-control" />
+                        <span asp-validation-for="MaximumEnrollment" class="text-danger"></span>
+                    </div>
+                    <label asp-for="MinimumEnrollment" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <input asp-for="MinimumEnrollment" class="form-control" />
+                        <span asp-validation-for="MinimumEnrollment" class="text-danger"></span>
+                    </div>
+                    <label asp-for="CollegeTypeIDs" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <select asp-for="CollegeTypeIDs" asp-items="Model.CollegeTypes"></select>
+                    </div>
+                    <label asp-for="StateIDs" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <select asp-for="StateIDs" asp-items="Model.States"></select>
+                    </div>
+                    <label asp-for="DegreeTypeID" class="col-md-4 control-label"></label>
+                    <div class="col-md-8">
+                        <select asp-for="DegreeTypeID" asp-items="Model.DegreeTypes"></select>
+                    </div>
                 </div>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <label asp-for="NameContains" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <input asp-for="NameContains" class="form-control" />
-                    <span asp-validation-for="NameContains" class="text-danger"></span>
-                </div>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <label asp-for="AddressContains" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <input asp-for="AddressContains" class="form-control" />
-                    <span asp-validation-for="AddressContains" class="text-danger"></span>
-                </div>
-                <label asp-for="MaxTotalCost" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <input asp-for="MaxTotalCost" class="form-control" />
-                    <span asp-validation-for="MaxTotalCost" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Query" class="btn btn-primary" />
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="row form-group">
-                <!-- Rows for the second column -->
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <label asp-for="MaximumEnrollment" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <input asp-for="MaximumEnrollment" class="form-control" />
-                    <span asp-validation-for="MaximumEnrollment" class="text-danger"></span>
-                </div>
-                <label asp-for="MinimumEnrollment" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <input asp-for="MinimumEnrollment" class="form-control" />
-                    <span asp-validation-for="MinimumEnrollment" class="text-danger"></span>
-                </div>
-                <label asp-for="CollegeTypeIDs" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <select asp-for="CollegeTypeIDs" asp-items="Model.CollegeTypes"></select>
-                </div>
-                <label asp-for="StateIDs" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <select asp-for="StateIDs" asp-items="Model.States"></select>
-                </div>
-                <label asp-for="DegreeTypeID" class="col-md-4 control-label"></label>
-                <div class="col-md-8">
-                    <select asp-for="DegreeTypeID" asp-items="Model.DegreeTypes"></select>
-                </div>
-            </div>
-        </div>
+    </form>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Query" class="btn btn-primary" />
-            </div>
-        </div>
-    </div>
-</form>
 
-@if (Model.Colleges != null)
+    @if (Model.Colleges != null)
 {
     @if (Model.Colleges.Count < 1)
     {
@@ -89,75 +92,75 @@
     }
     else
     {
-    <h3>Selected Colleges</h3>
-    <div class="row">
-        <div class="col-md-6">
+        <h3>Selected Colleges</h3>
+        <div class="row">
+            <div class="col-md-6">
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            Map #
-                        </th>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Details
-                        </th>
-                        <th>
-                            College Scorecard **
-                        </th>
-                        <th>
-                            Distance *
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{ var mapIndex = 1; }
-                    @foreach (var item in Model.Colleges)
-                    {
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>
-                                @mapIndex
-                                @{ mapIndex++; }
-                            </td>
-                            <td>
-                                <a href="@Html.DisplayFor(modelItem => item.Website)">@Html.DisplayFor(modelItem => item.Name)</a>
-                            </td>
-                            <td>
-                                <a asp-controller="Colleges" asp-action="Details" asp-route-id="@item.ID">Link</a>
-                            </td>
-                            <td>
-                                <a href="https://collegescorecard.ed.gov/school/?@item.CollegeScorecardID">Link</a>
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Distance)
-                            </td>
+                            <th>
+                                Map #
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Details
+                            </th>
+                            <th>
+                                College Scorecard **
+                            </th>
+                            <th>
+                                Distance *
+                            </th>
                         </tr>
-                                    }
-                </tbody>
-            </table>
-            <p>@Model.DistanceMessage</p>
-            <p>** College Scorecard Info Not Always Available</p>
+                    </thead>
+                    <tbody>
+                        @{ var mapIndex = 1; }
+                        @foreach (var item in Model.Colleges)
+                        {
+                            <tr>
+                                <td>
+                                    @mapIndex
+                                    @{ mapIndex++; }
+                                </td>
+                                <td>
+                                    <a target="_blank" href="@Html.DisplayFor(modelItem => item.Website)">@Html.DisplayFor(modelItem => item.Name)</a>
+                                </td>
+                                <td>
+                                    <a target="_blank" asp-controller="Colleges" asp-action="Details" asp-route-id="@item.ID">Details</a>
+                                </td>
+                                <td>
+                                    <a target="_blank" href="https://collegescorecard.ed.gov/school/?@item.CollegeScorecardID">Scorecard</a>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Distance)
+                                </td>
+                            </tr>
+                                        }
+                    </tbody>
+                </table>
+                <p>@Model.DistanceMessage</p>
+                <p>** College Scorecard Info Not Always Available</p>
+            </div>
+            <div class="col-md-6">
+                @if (Model.Colleges.Count > 50)
+                {
+                    <h3>Too many matches to map.  Narrow selection criteria to less than 50 matches.</h3>
+
+                }
+                else
+                {
+                    <div id="map"></div>
+                }
+            </div>
         </div>
-        <div class="col-md-6">
-            @if (Model.Colleges.Count > 50)
-            {
-                <h3>Too many matches to map.  Narrow selection criteria to less than 50 matches.</h3>
 
-            }
-            else
-            {
-                <div id="map"></div>
-            }
-        </div>
-    </div>
+        @if (Model.Colleges.Count < 51)
+        {
 
-    @if (Model.Colleges.Count < 51)
-    {
-
-    <script>
+            <script>
     var newMarker;
     function initMap() {
         var bounds = new google.maps.LatLngBounds();
@@ -192,10 +195,17 @@
         map.fitBounds(bounds);
     }
 
-    </script>
+            </script>
             <script async defer
                     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZlFiNuQsfssb97q19gLwKWvpdb4ptC-U&callback=initMap">
             </script>
         }
-    }
+                                        }
+                                            }
+                                        }
+                                        else
+                                        {
+    <h3>No Colleges in database.  Administrator needs to load.</h3>
+
 }
+

@@ -24,7 +24,7 @@ namespace CollegeMap.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             /* query components
              * text that is contained in College Name
@@ -34,23 +34,30 @@ namespace CollegeMap.Controllers
              * maximum enrollment
              * maximum tuition + R&B
             */
-            IEnumerable<CollegeType> collegeTypes = _context.CollegeTypes.ToList();
-            IEnumerable<DegreeType> degreeTypes = _context.DegreeTypes.ToList();
-            IEnumerable<ImportSource> importSources = _context.ImportSources.ToList();
-            IEnumerable<String> states = _context.Colleges.OrderBy(c => c.State).Select(c => c.State).Distinct().ToList();
+            if (_context.Colleges.Any()) {
 
-            ImportSource latestImport = importSources.OrderByDescending(i => i.ImportTime).FirstOrDefault();
- 
-            QueryCollegeViewModel queryCollegeViewModel = new QueryCollegeViewModel(collegeTypes, degreeTypes, states);
-            queryCollegeViewModel.CollegeDataProvider = latestImport.Source;
-            queryCollegeViewModel.CollegeDataVersion = latestImport.Version;
+                IEnumerable<CollegeType> collegeTypes = _context.CollegeTypes.ToList();
+                IEnumerable<DegreeType> degreeTypes = _context.DegreeTypes.ToList();
+                IEnumerable<ImportSource> importSources = _context.ImportSources.ToList();
+                IEnumerable<String> states = _context.Colleges.OrderBy(c => c.State).Select(c => c.State).Distinct().ToList();
 
-            // set default minimum enrollment to minimum value in DB
-            queryCollegeViewModel.MinimumEnrollment = _context.Colleges.Where(c => c.Enrollment > 0).Min(c => c.Enrollment);
-            // set default maximum enrollment to minimum value in DB
-            queryCollegeViewModel.MaximumEnrollment = _context.Colleges.Max(c => c.Enrollment);
-            queryCollegeViewModel.MaxTotalCost = _context.Colleges.Max(c => c.AvgNetPrice);
-            return View(queryCollegeViewModel);
+                ImportSource latestImport = importSources.OrderByDescending(i => i.ImportTime).FirstOrDefault();
+
+                QueryCollegeViewModel queryCollegeViewModel = new QueryCollegeViewModel(collegeTypes, degreeTypes, states);
+                queryCollegeViewModel.CollegeDataProvider = latestImport.Source;
+                queryCollegeViewModel.CollegeDataVersion = latestImport.Version;
+
+                // set default minimum enrollment to minimum value in DB
+                queryCollegeViewModel.MinimumEnrollment = _context.Colleges.Where(c => c.Enrollment > 0).Min(c => c.Enrollment);
+                // set default maximum enrollment to minimum value in DB
+                queryCollegeViewModel.MaximumEnrollment = _context.Colleges.Max(c => c.Enrollment);
+                queryCollegeViewModel.MaxTotalCost = _context.Colleges.Max(c => c.AvgNetPrice);
+                return View(queryCollegeViewModel);
+            }
+            else
+            {
+                return View();
+            }
         }
 
         // POST: /Query

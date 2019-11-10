@@ -14,6 +14,7 @@ using System.IO;
 using Newtonsoft.Json;
 using CsvHelper;
 using X.PagedList;
+using System.Reflection;
 
 namespace CollegeMap.Controllers
 {
@@ -280,13 +281,14 @@ namespace CollegeMap.Controllers
         }
 
         // GET: Colleges/Maintenance
-        public async Task<IActionResult> Maintenance()
+        public IActionResult Maintenance()
         {
             return View();
         }
 
         // GET: Colleges/Import
         public async Task<IActionResult> Import(string source, string version)
+            // only works when using localhost for accessing local file to import
         {
             ViewData["ImportMessage"] = "Import Fail";
             if (source == null)
@@ -303,14 +305,17 @@ namespace CollegeMap.Controllers
                 Version = version,
                 ImportTime = DateTime.Now
             };
+            // add import source to the database
             _context.Add(importSource);
             await _context.SaveChangesAsync();
 
-            string path = @"C:\Users\m204950\Downloads\EssentialCollegeData.csv";
-                using (FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate))
-                {
+            var assembly = Assembly.GetExecutingAssembly();
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("CollegeData.csv"));
 
-                    using (StreamReader sr = new StreamReader(fileStream))
+            using (Stream fileStream = assembly.GetManifestResourceStream(resourceName))
+            {
+
+                using (StreamReader sr = new StreamReader(fileStream))
                     {
                         var reader = new CsvReader(sr);
 
@@ -319,29 +324,50 @@ namespace CollegeMap.Controllers
                         //int count = records.Count();
                         foreach (Csv_CollegeImport entry in records)
                         {
-                            // only use if some cost information is available
-                            if (entry.TUITIONFEE_IN != -1 || entry.TUITIONFEE_OUT != -1 || entry.NetPrice != -1)
+                        int.TryParse(entry.TUITIONFEE_IN, out int inStateTuition);
+                        // only use if some cost information is available
+                        if (inStateTuition != 0)
+                        {
+                            int.TryParse(entry.TUITIONFEE_OUT, out int outOfStateTuition);
+                            int.TryParse(entry.TUITFTE, out int averageTuition);
+                            int.TryParse(entry.UGDS, out int enrollment);
+                            DegreeType highDeg = ConvertImportedDegreeType(entry.HIGHDEG);
+                            CollegeType collegeType = ConvertImportedCollegeType(entry.CONTROL);
+                            float.TryParse(entry.ADM_RATE, out float admRate);
+                            float.TryParse(entry.LATITUDE, out float lattitude);
+                            float.TryParse(entry.LONGITUDE, out float longitude);
+                            float.TryParse(entry.C150_4_POOLED_SUPP, out float graduationRate);
+                            float.TryParse(entry.UGDS_WHITE, out float percentWhite);
+                            // check if college url already has http
+                            string institutionWebsite;
+                            if (entry.INSTURL.StartsWith("http"))
                             {
-                                DegreeType highDeg = ConvertImportedDegreeType(entry.HIGHDEG);
-                                CollegeType collegeType = ConvertImportedCollegeType(entry.CONTROL);
-                                College college = new College
+                                institutionWebsite = entry.INSTURL;
+                            }
+                            else
+                            {
+                                institutionWebsite = "https://" + entry.INSTURL;
+                            }
+                            College college = new College
                                 {
                                     Name = entry.INSTNM,
                                     CollegeScorecardID = entry.UNITID,
-                                    Enrollment = entry.UGDS,
-                                    AnnualTuition = entry.TUITIONFEE_IN,
-                                    AnnualTuitionOut = entry.TUITIONFEE_OUT,
-                                    AvgNetPrice = entry.NetPrice,
-                                    AcceptanceRate = entry.ADM_RATE,
-                                    Website = "http://" + entry.INSTURL,
+                                    Enrollment = enrollment,
+                                    AnnualTuition = inStateTuition,
+                                    AnnualTuitionOut = outOfStateTuition,
+                                    AvgNetPrice = averageTuition,
+                                    AcceptanceRate = admRate,
+                                    Website = institutionWebsite,
                                     Address = entry.CITY + ", " + entry.STABBR + " " + entry.ZIP,
-                                    Latitude = entry.LATITUDE,
-                                    Longitude = entry.LONGITUDE,
+                                    Latitude = lattitude,
+                                    Longitude = longitude,
                                     State = entry.STABBR,
 
                                     Type = collegeType,
-                                    HighestDegreeOffered = highDeg
-                                };
+                                    HighestDegreeOffered = highDeg,
+                                    GraduationRate = graduationRate,
+                                    PercentWhite = percentWhite
+                            };
                                 _context.Add(college);
                             }
 
